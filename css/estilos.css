@@ -60,7 +60,7 @@
 *,*::before,*::after{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
-body{transition:background-color .3s,color .3s;margin:0;overflow-x:clip;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;background:var(--fondo);color:var(--texto);font-family:var(--fuente-texto);font-size:1.0625rem;line-height:1.6}
+body{margin:0;overflow-x:clip;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;background:var(--fondo);color:var(--texto);font-family:var(--fuente-texto);font-size:1.0625rem;line-height:1.6}
 img{max-width:100%;display:block}
 h1,h2,h3{font-family:var(--fuente-titulos);font-weight:400;line-height:1.15;margin:0 0 .5em}
 h2{font-size:clamp(1.9rem,4vw,2.8rem)}
@@ -311,3 +311,7 @@ button{font:inherit;cursor:pointer}
 @keyframes destello{0%{background:var(--amarillo);color:var(--sobre-amarillo)}100%{background:transparent}}
 .tasa-cambio{animation:destello 1.6s ease-out;border-radius:6px}
 .chip-tasa.tasa-cambio{animation:none;outline:3px solid var(--amarillo);outline-offset:2px;transition:outline-color 1.6s}
+
+/* Mientras cambia el tema se desactivan las transiciones para que
+   todo cambie de color al mismo tiempo, sin parpadeos */
+.cambiando-tema *,.cambiando-tema *::before,.cambiando-tema *::after{transition:none!important;animation:none!important}

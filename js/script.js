@@ -237,13 +237,13 @@ function abrirModal(id) {
     `<button class="opcion" data-i="${i}" aria-pressed="${i === 0}">${o.nombre}</button>`).join("");
   $("#modalPrecio").innerHTML = precioHTML(actual.opciones[0].precio);
   $("#modal").classList.add("visible"); $("#capa").classList.add("visible");
-  $("#cerrarModal").focus();
+  $("#cerrarModal").focus({ preventScroll: true });
 }
 function cerrarModal() {
   if (!$("#modal").classList.contains("visible")) return;
   $("#modal").classList.remove("visible");
   if (!$("#carrito").classList.contains("abierto")) $("#capa").classList.remove("visible");
-  if (ultimoFoco) ultimoFoco.focus();
+  if (ultimoFoco) ultimoFoco.focus({ preventScroll: true });
 }
 $("#modalMiniaturas").addEventListener("click", e => {
   const b = e.target.closest("[data-foto]"); if (b) mostrarFoto(+b.dataset.foto);
@@ -302,7 +302,7 @@ $("#carritoLista").addEventListener("click", e => {
   if (c.quitar || x.cantidad < 1) carrito = carrito.filter(i => i !== x);
   guardar(); pintarCarrito();
 });
-function abrirCarrito() { $("#carrito").classList.add("abierto"); $("#carrito").setAttribute("aria-hidden", "false"); $("#capa").classList.add("visible"); $("#cerrarCarrito").focus(); }
+function abrirCarrito() { $("#carrito").classList.add("abierto"); $("#carrito").setAttribute("aria-hidden", "false"); $("#capa").classList.add("visible"); $("#cerrarCarrito").focus({ preventScroll: true }); }
 function cerrarCarrito() { $("#carrito").classList.remove("abierto"); $("#carrito").setAttribute("aria-hidden", "true"); if (!$("#modal").classList.contains("visible")) $("#capa").classList.remove("visible"); }
 $("#abrirCarrito").addEventListener("click", abrirCarrito);
 $("#cerrarCarrito").addEventListener("click", cerrarCarrito);
@@ -356,6 +356,8 @@ function temaActual() {
 }
 function aplicarTema(t) {
   const raiz = document.documentElement;
+  // Cambia todos los colores a la vez, sin transiciones a medias ni saltos
+  raiz.classList.add("cambiando-tema");
   if (t === "auto") raiz.removeAttribute("data-theme"); else raiz.setAttribute("data-theme", t);
   try { t === "auto" ? localStorage.removeItem("tema-amara") : localStorage.setItem("tema-amara", t); } catch (e) {}
   const oscuro = t === "dark" || (t === "auto" && sistemaOscuro.matches);
@@ -363,17 +365,18 @@ function aplicarTema(t) {
   $("#iconoTema").innerHTML = ICONOS_TEMA[t];
   document.querySelectorAll("[data-tema]").forEach(b => b.setAttribute("aria-checked", b.dataset.tema === t));
   $("#botonTema").setAttribute("aria-label", "Cambiar apariencia (actual: " + { light: "claro", dark: "oscuro", auto: "automático" }[t] + ")");
+  requestAnimationFrame(() => requestAnimationFrame(() => raiz.classList.remove("cambiando-tema")));
 }
 function cerrarMenuTema() { $("#menuTema").classList.remove("abierto"); $("#botonTema").setAttribute("aria-expanded", "false"); }
 $("#botonTema").addEventListener("click", e => {
   e.stopPropagation();
   const abierto = $("#menuTema").classList.toggle("abierto");
   $("#botonTema").setAttribute("aria-expanded", abierto);
-  if (abierto) $('#menuTema [aria-checked="true"]').focus();
+  if (abierto) $('#menuTema [aria-checked="true"]').focus({ preventScroll: true });
 });
 $("#menuTema").addEventListener("click", e => {
   const b = e.target.closest("[data-tema]"); if (!b) return;
-  aplicarTema(b.dataset.tema); cerrarMenuTema(); $("#botonTema").focus();
+  aplicarTema(b.dataset.tema); cerrarMenuTema(); $("#botonTema").focus({ preventScroll: true });
 });
 document.addEventListener("click", e => { if (!e.target.closest(".tema")) cerrarMenuTema(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarMenuTema(); });
