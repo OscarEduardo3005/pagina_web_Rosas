@@ -1,0 +1,3 @@
+Aquí están las fotos de los productos.
+Para agregar una nueva: guárdala aquí (ej. "rosa-roja.jpg") y escribe su ruta
+en js/script.js dentro de "imagenes", por ejemplo: imagenes:["img/rosa-roja.jpg"]

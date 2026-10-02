@@ -1,0 +1,313 @@
+/* =========================================================
+   1. PALETA DE COLORES — cambia estos valores y toda la
+      página se actualiza. Inspirada en el lazo lavanda y
+      las flores amarillas de Amara.
+   ========================================================= */
+:root{
+  --fondo:          #F8F6FD;  /* fondo general (blanco lavanda) */
+  --fondo-alt:      #EEE9FA;  /* secciones alternas */
+  --texto:          #2E2648;  /* texto principal (ciruela oscuro) */
+  --texto-suave:    #655D80;  /* texto secundario */
+  --principal:      #6A51B8;  /* botones y acentos (lavanda intenso) */
+  --principal-hover:#553E9C;
+  --lavanda:        #A99BE6;  /* lazo, detalles */
+  --amarillo:       #F6C21C;  /* girasol */
+  --amarillo-suave: #FFE68A;
+  --blanco:         #FFFFFF;
+  --superficie:     #FFFFFF;  /* tarjetas, campos y botones redondos */
+  --sobre-principal:#FFFFFF;  /* texto encima de botones lavanda */
+  --sobre-amarillo: #2E2648;  /* texto encima del amarillo */
+  --oscuro:         #2E2648;  /* bloque de promoción, pie y avisos */
+  --sobre-oscuro:   #F8F6FD;
+  --sombra:         rgba(46,38,72,.12);
+  --borde:          #DED6F5;
+
+  --fuente-titulos: "Marcellus", Georgia, serif;
+  --fuente-texto:   "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  --fuente-mano:    "Caveat", "Comic Sans MS", cursive;
+  --radio: 20px;
+  --ancho: 1200px;
+  color-scheme: light;
+}
+
+/* =========================================================
+   1b. MODO OSCURO — se activa si el cliente lo elige, o en
+       "Automático" si su teléfono/PC está en modo oscuro.
+       Si cambias un color aquí, cámbialo en los DOS bloques.
+   ========================================================= */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --fondo:#15111E; --fondo-alt:#1E1830; --texto:#F1EDFA; --texto-suave:#B5ACCD;
+    --principal:#A891F2; --principal-hover:#BDAAF7; --lavanda:#7D6BC4;
+    --amarillo:#F6C21C; --amarillo-suave:#F6D569; --borde:#342B4D;
+    --superficie:#221B35; --sobre-principal:#15111E; --sobre-amarillo:#211A33;
+    --oscuro:#0D0A14; --sobre-oscuro:#F1EDFA; --sombra:rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --fondo:#15111E; --fondo-alt:#1E1830; --texto:#F1EDFA; --texto-suave:#B5ACCD;
+  --principal:#A891F2; --principal-hover:#BDAAF7; --lavanda:#7D6BC4;
+  --amarillo:#F6C21C; --amarillo-suave:#F6D569; --borde:#342B4D;
+  --superficie:#221B35; --sobre-principal:#15111E; --sobre-amarillo:#211A33;
+  --oscuro:#0D0A14; --sobre-oscuro:#F1EDFA; --sombra:rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+
+/* =========================================================
+   2. BASE
+   ========================================================= */
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{transition:background-color .3s,color .3s;margin:0;overflow-x:clip;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;background:var(--fondo);color:var(--texto);font-family:var(--fuente-texto);font-size:1.0625rem;line-height:1.6}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--fuente-titulos);font-weight:400;line-height:1.15;margin:0 0 .5em}
+h2{font-size:clamp(1.9rem,4vw,2.8rem)}
+p{margin:0 0 1em}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--principal);outline-offset:3px;border-radius:6px}
+.contenedor{max-width:var(--ancho);margin:0 auto;padding:0 20px}
+.seccion{padding:84px 0}
+.seccion-alt{background:var(--fondo-alt)}
+.intro{max-width:58ch;margin-bottom:40px;color:var(--texto-suave)}
+.nota-mano{font-family:var(--fuente-mano);font-size:1.7rem;line-height:1.2;color:var(--principal)}
+.img-cubrir{width:100%;height:100%;object-fit:cover}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:14px 28px;font-weight:700;text-decoration:none;transition:background .2s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-principal{background:var(--principal);color:var(--sobre-principal)}
+.btn-principal:hover{background:var(--principal-hover)}
+.btn-borde{background:transparent;color:var(--texto);box-shadow:inset 0 0 0 2px var(--texto)}
+.btn-borde:hover{background:var(--texto);color:var(--fondo)}
+
+/* =========================================================
+   3. BARRA DE AVISO Y ENCABEZADO
+   ========================================================= */
+.aviso{background:var(--principal);color:var(--sobre-principal);text-align:center;font-size:.9rem;padding:8px 16px}
+.encabezado{position:sticky;top:0;z-index:50;background:var(--fondo);border-bottom:1px solid var(--borde)}
+.encabezado .contenedor{display:flex;align-items:center;justify-content:space-between;height:76px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--texto)}
+.logo svg{width:40px;height:30px}
+.logo-texto{font-family:var(--fuente-titulos);font-size:1.6rem;letter-spacing:.32em;line-height:1}
+.logo-sub{display:block;font-family:var(--fuente-texto);font-size:.62rem;letter-spacing:.12em;color:var(--texto-suave);margin-top:4px}
+.menu{display:flex;gap:28px;list-style:none;margin:0;padding:0}
+.menu a{text-decoration:none;font-weight:600}
+.menu a:hover{color:var(--principal)}
+.acciones{display:flex;align-items:center;gap:10px}
+.icono-btn{position:relative;background:var(--superficie);border:1px solid var(--borde);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--texto)}
+.icono-btn svg{width:22px;height:22px}
+.contador{position:absolute;top:-4px;right:-4px;background:var(--amarillo);color:var(--sobre-amarillo);font-size:.75rem;font-weight:800;min-width:22px;height:22px;border-radius:11px;display:grid;place-items:center;padding:0 5px}
+.contador.vacio{display:none}
+.solo-movil{display:none}
+@media (max-width:860px){
+  .menu{position:fixed;inset:76px 0 auto 0;flex-direction:column;background:var(--fondo);padding:20px;gap:18px;border-bottom:1px solid var(--borde);transform:translateY(-140%);transition:transform .3s}
+  .menu.abierto{transform:none}
+  .solo-movil{display:grid}
+  .logo-sub{display:none}
+}
+/* Teléfonos pequeños */
+@media (max-width:400px){
+  .contenedor{padding:0 16px}
+  .encabezado .contenedor{gap:8px}
+  .logo svg{width:32px;height:24px}
+  .logo-texto{font-size:1.3rem;letter-spacing:.2em}
+  .icono-btn{width:40px;height:40px}
+  .acciones{gap:6px}
+  .seccion{padding:60px 0}
+  .portada{padding:36px 0 60px}
+  .portada-botones .btn{flex:1 1 100%;justify-content:center}
+  .promo{border-radius:24px}
+  .modal{padding:0;place-items:end center}
+  .modal-caja{max-height:92vh;border-radius:var(--radio) var(--radio) 0 0}
+  .modal-info{padding:24px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+  .modal-info h2{font-size:1.6rem}
+}
+/* En pantallas táctiles, sin efecto de zoom al pasar el dedo */
+@media (hover:none){.producto-img:hover img{transform:none}}
+
+/* =========================================================
+   4. PORTADA
+   ========================================================= */
+.portada{padding:56px 0 84px;overflow:hidden}
+.portada .contenedor{display:grid;grid-template-columns:1.15fr 1fr;gap:56px;align-items:center}
+.portada .nota-mano{margin-bottom:12px;transform:rotate(-3deg);display:inline-block}
+.portada h1{font-size:clamp(2.6rem,6vw,4.6rem);letter-spacing:-.01em}
+.portada p{font-size:1.15rem;color:var(--texto-suave);max-width:44ch}
+.portada-botones{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.portada-fotos{position:relative;display:grid;grid-template-columns:1fr .7fr;gap:16px;align-items:end}
+.portada-fotos .foto-grande{aspect-ratio:3/4.4;border-radius:200px 200px var(--radio) var(--radio);overflow:hidden;background:var(--fondo-alt)}
+.portada-fotos .foto-chica{aspect-ratio:3/4;border-radius:var(--radio);overflow:hidden;margin-bottom:40px;background:var(--fondo-alt)}
+.lazo{position:absolute;top:18px;right:4px;background:var(--amarillo);color:var(--sobre-amarillo);font-weight:800;padding:10px 18px;border-radius:999px;transform:rotate(5deg);font-size:.95rem}
+@media (max-width:860px){.portada .contenedor{grid-template-columns:1fr}.portada-fotos{max-width:480px;margin:0 auto;width:100%}}
+
+/* =========================================================
+   5. VENTAJAS
+   ========================================================= */
+.ventajas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:36px;padding:44px 0;border-top:1px solid var(--borde);border-bottom:1px solid var(--borde)}
+.ventaja{display:flex;gap:16px;align-items:flex-start}
+.ventaja-icono{flex:none;width:52px;height:52px;border-radius:50%;background:var(--principal);color:var(--sobre-principal);display:grid;place-items:center}
+.ventaja-icono svg{width:26px;height:26px}
+.ventaja h3{font-family:var(--fuente-texto);font-weight:800;font-size:1.05rem;margin:4px 0 2px}
+.ventaja p{color:var(--texto-suave);margin:0;font-size:.97rem}
+
+/* =========================================================
+   6. CATÁLOGO
+   ========================================================= */
+.filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.filtro{border:2px solid var(--principal);background:transparent;color:var(--principal);padding:8px 18px;border-radius:999px;font-weight:700}
+.filtro[aria-pressed="true"]{background:var(--principal);color:var(--sobre-principal)}
+.buscador{width:100%;max-width:380px;padding:12px 18px;border-radius:999px;border:1px solid var(--borde);background:var(--superficie);font:inherit;color:var(--texto);margin-bottom:32px}
+.grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px}
+.producto{background:var(--superficie);border-radius:var(--radio);overflow:hidden;display:flex;flex-direction:column}
+.producto-img{aspect-ratio:4/5;position:relative;cursor:pointer;background:var(--fondo-alt);border:0;padding:0;overflow:hidden}
+.producto-img img{transition:transform .5s}
+.producto-img:hover img{transform:scale(1.04)}
+.etiqueta{position:absolute;top:14px;left:14px;background:var(--amarillo);color:var(--sobre-amarillo);font-size:.8rem;font-weight:800;padding:5px 12px;border-radius:999px}
+.producto-info{padding:20px;display:flex;flex-direction:column;flex:1}
+.producto-info h3{font-size:1.35rem;margin-bottom:6px}
+.producto-info p{color:var(--texto-suave);font-size:.95rem;flex:1}
+.producto-pie{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.precio{font-weight:800;font-size:1.2rem;line-height:1.2}
+.precio-bs{display:block;font-size:.85rem;font-weight:700;color:var(--principal);margin-top:2px}
+.precio small{display:block;font-size:.78rem;font-weight:600;color:var(--texto-suave)}
+.btn-agregar{background:var(--principal);color:var(--sobre-principal);border:0;border-radius:999px;padding:10px 18px;font-weight:700}
+.btn-agregar:hover{background:var(--principal-hover)}
+.sin-resultados{grid-column:1/-1;text-align:center;padding:40px;color:var(--texto-suave)}
+
+/* =========================================================
+   7. PROMOCIÓN
+   ========================================================= */
+.promo{background:var(--oscuro);color:var(--sobre-oscuro);border:1px solid var(--borde);border-radius:32px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.promo-texto{padding:56px 48px;display:flex;flex-direction:column;justify-content:center}
+.promo-texto .nota-mano{color:var(--amarillo-suave)}
+.promo-texto h2{color:var(--sobre-oscuro)}
+.promo-texto p{opacity:.85;max-width:42ch}
+.promo-texto ul{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-wrap:wrap;gap:8px}
+.promo-texto li{border:1px solid color-mix(in srgb,var(--sobre-oscuro) 35%,transparent);border-radius:999px;padding:6px 14px;font-size:.92rem}
+.promo-texto .btn{align-self:flex-start;background:var(--amarillo);color:var(--sobre-amarillo)}
+.promo-texto .btn:hover{background:var(--amarillo-suave)}
+.promo-img{min-height:420px}
+@media (max-width:860px){.promo{grid-template-columns:1fr}.promo-texto{padding:40px 28px}.promo-img{min-height:0;aspect-ratio:2/3;order:-1}}
+
+/* =========================================================
+   8. CÓMO PEDIR (es un proceso, por eso va numerado)
+   ========================================================= */
+.pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;list-style:none;padding:0;margin:0;counter-reset:paso}
+.pasos li{counter-increment:paso}
+.pasos li::before{content:counter(paso);display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--amarillo);font-family:var(--fuente-titulos);font-size:1.6rem;margin-bottom:14px;color:var(--sobre-amarillo)}
+.pasos h3{font-size:1.25rem}
+.pasos p{color:var(--texto-suave)}
+
+/* =========================================================
+   9. NOSOTROS
+   ========================================================= */
+.nosotros .contenedor{display:grid;grid-template-columns:.9fr 1fr;gap:64px;align-items:center}
+.nosotros-img{aspect-ratio:4/5;border-radius:var(--radio);overflow:hidden}
+.nosotros p{color:var(--texto-suave)}
+.nosotros .nota-mano{display:block;margin:4px 0 24px}
+@media (max-width:860px){.nosotros .contenedor{grid-template-columns:1fr}}
+
+/* =========================================================
+   10. OPINIONES Y GALERÍA
+   ========================================================= */
+.opiniones{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.opinion{margin:0;background:var(--superficie);padding:28px;border-radius:var(--radio)}
+.opinion blockquote{margin:0 0 16px;font-size:1.05rem}
+.opinion figcaption{font-weight:800}
+.estrellas{color:var(--amarillo);margin-bottom:10px;letter-spacing:2px;font-size:1.1rem}
+.galeria{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:220px;gap:12px}
+.galeria figure{margin:0;background:var(--fondo-alt);border-radius:14px;overflow:hidden}
+.galeria figure:nth-child(1){grid-row:span 2}
+.galeria figure:nth-child(4){grid-row:span 2}
+@media (max-width:700px){.galeria{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}}
+
+/* =========================================================
+   11. CONTACTO Y PIE
+   ========================================================= */
+.contacto .contenedor{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.dato{margin-bottom:18px}
+.dato strong{display:block;font-family:var(--fuente-titulos);font-weight:400;font-size:1.2rem}
+.mapa{border-radius:var(--radio);overflow:hidden;min-height:320px;background:var(--fondo-alt);display:grid;place-items:center;color:var(--texto-suave);text-align:center;padding:20px}
+.mapa iframe{width:100%;height:100%;min-height:320px;border:0}
+@media (max-width:860px){.contacto .contenedor{grid-template-columns:1fr}}
+.pie{background:var(--oscuro);color:var(--sobre-oscuro);border-top:1px solid var(--borde);padding:48px 0 28px}
+.pie .contenedor{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:flex-start}
+.pie .logo{color:var(--sobre-oscuro)}
+.pie .logo-sub{color:var(--sobre-oscuro);opacity:.7;display:block}
+.pie a{color:var(--sobre-oscuro);text-decoration:none;opacity:.85}
+.pie a:hover{opacity:1}
+.redes{display:flex;gap:18px}
+.copy{width:100%;border-top:1px solid rgba(255,255,255,.2);padding-top:20px;font-size:.85rem;opacity:.7}
+
+/* =========================================================
+   12. CARRITO, MODAL Y AVISOS
+   ========================================================= */
+.capa{position:fixed;inset:0;background:rgba(30,22,52,.55);opacity:0;pointer-events:none;transition:opacity .3s;z-index:80}
+.capa.visible{opacity:1;pointer-events:auto}
+.carrito{position:fixed;top:0;right:0;height:100%;width:min(420px,100%);background:var(--fondo);z-index:90;transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.carrito.abierto{transform:none}
+.carrito-cab{display:flex;justify-content:space-between;align-items:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px;border-bottom:1px solid var(--borde)}
+.carrito-cab h2{font-size:1.6rem;margin:0}
+.carrito-lista{flex:1;overflow-y:auto;padding:20px;list-style:none;margin:0}
+.item{display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;margin-bottom:18px}
+.item-img{width:70px;height:70px;border-radius:12px;overflow:hidden;background:var(--fondo-alt)}
+.item h3{font-family:var(--fuente-texto);font-weight:800;font-size:1rem;margin:0}
+.item small{color:var(--texto-suave)}
+.cantidad{display:flex;align-items:center;gap:6px;margin-top:4px}
+.cantidad button{width:28px;height:28px;border-radius:50%;border:1px solid var(--borde);background:var(--superficie);color:var(--texto)}
+.quitar{background:none;border:0;color:var(--texto-suave);text-decoration:underline;font-size:.85rem}
+.carrito-vacio{text-align:center;color:var(--texto-suave);padding:40px 10px}
+.carrito-pie{padding:20px;border-top:1px solid var(--borde)}
+.carrito-pie label{display:block;font-weight:700;font-size:.92rem;margin-bottom:6px}
+.carrito-pie textarea{width:100%;min-height:64px;border:1px solid var(--borde);border-radius:12px;padding:10px 12px;font:inherit;font-size:.95rem;color:var(--texto);background:var(--superficie);resize:vertical;margin-bottom:14px}
+.total{display:flex;justify-content:space-between;font-weight:800;font-size:1.25rem;margin-bottom:14px}
+.carrito-pie .btn{width:100%;justify-content:center}
+.total-bs{display:block;font-size:.95rem;color:var(--principal)}
+.tasa-carrito{font-size:.8rem;color:var(--texto-suave);margin:-6px 0 12px;text-align:right}
+.chip-tasa{display:inline-block;background:var(--amarillo-suave);color:var(--sobre-amarillo);font-weight:700;font-size:.9rem;padding:6px 14px;border-radius:999px;margin-bottom:20px}
+
+.modal{position:fixed;inset:0;display:grid;place-items:center;z-index:95;padding:20px;pointer-events:none;opacity:0;transition:opacity .25s}
+.modal.visible{opacity:1;pointer-events:auto}
+.modal-caja{background:var(--fondo);border-radius:var(--radio);max-width:880px;width:100%;max-height:90vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative}
+.modal-galeria{background:var(--fondo-alt)}
+.modal-img{aspect-ratio:4/5}
+.miniaturas{display:flex;gap:8px;padding:10px}
+.miniaturas:empty{display:none}
+.miniaturas button{width:60px;height:60px;border-radius:10px;overflow:hidden;border:2px solid transparent;padding:0;background:none}
+.miniaturas button[aria-pressed="true"]{border-color:var(--principal)}
+.modal-info{padding:36px 32px}
+.modal-info h2{font-size:2rem;padding-right:44px}
+.modal-info p{color:var(--texto-suave)}
+.modal-cerrar{position:absolute;top:12px;right:12px;z-index:2}
+.opciones{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 24px}
+.opcion{border:2px solid var(--borde);background:var(--superficie);color:var(--texto);border-radius:12px;padding:8px 14px;font-weight:600}
+.opcion[aria-pressed="true"]{border-color:var(--principal);color:var(--principal)}
+@media (max-width:700px){.modal-caja{grid-template-columns:1fr}.modal-img{aspect-ratio:1}}
+
+.toast{visibility:hidden;position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,180%);background:var(--oscuro);color:var(--sobre-oscuro);border:1px solid var(--borde);padding:12px 22px;border-radius:999px;z-index:100;transition:transform .3s;font-weight:600}
+.toast.visible{visibility:visible;transform:translate(-50%,0)}
+.whatsapp-flotante{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;background:#25D366;display:grid;place-items:center;z-index:60;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.whatsapp-flotante svg{width:32px;height:32px;fill:#fff}
+
+/* =========================================================
+   13. SELECTOR DE TEMA (Claro / Oscuro / Automático)
+   ========================================================= */
+.tema{position:relative}
+.tema-menu{position:absolute;top:calc(100% + 10px);right:0;background:var(--superficie);border:1px solid var(--borde);border-radius:16px;padding:6px;min-width:190px;box-shadow:0 12px 30px var(--sombra);list-style:none;margin:0;display:none;z-index:70}
+.tema-menu.abierto{display:block}
+.tema-menu button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;color:var(--texto);padding:10px 12px;border-radius:10px;font-weight:600;text-align:left}
+.tema-menu button:hover{background:var(--fondo-alt)}
+.tema-menu button[aria-checked="true"]{color:var(--principal)}
+.tema-menu button[aria-checked="true"]::after{content:"✓";margin-left:auto}
+.tema-menu svg{width:18px;height:18px;flex:none}
+/* En modo oscuro las fotos se oscurecen un poquito para no encandilar */
+:root[data-theme="dark"] .img-cubrir{filter:brightness(.92)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .img-cubrir{filter:brightness(.92)}}
+
+/* Destello cuando la tasa BCV cambia */
+@keyframes destello{0%{background:var(--amarillo);color:var(--sobre-amarillo)}100%{background:transparent}}
+.tasa-cambio{animation:destello 1.6s ease-out;border-radius:6px}
+.chip-tasa.tasa-cambio{animation:none;outline:3px solid var(--amarillo);outline-offset:2px;transition:outline-color 1.6s}

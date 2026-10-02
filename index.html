@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amara | Flores artesanales que no se marchitan</title>
+<meta name="theme-color" content="#6A51B8">
+<!-- Aplica el tema guardado antes de mostrar la página (evita un parpadeo) -->
+<script>try{var t=localStorage.getItem("tema-amara");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
+<link rel="apple-touch-icon" href="img/girasol-maceta-2.jpg">
+<meta name="description" content="Ramos, girasoles y flores hechas a mano con limpiapipas. Detalles que duran para siempre, listos para regalar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Marcellus&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<!-- ===================== BARRA DE AVISO ===================== -->
+<div class="aviso"><span class="tasa-bcv">Consultando tasa BCV…</span></div>
+
+<!-- ===================== ENCABEZADO ===================== -->
+<header class="encabezado">
+  <div class="contenedor">
+    <!-- LOGO: si tienes tu logo en imagen, reemplaza todo el <a> por:
+         <a href="#inicio" class="logo"><img src="img/logo.png" alt="Amara" style="height:48px"></a> -->
+    <a href="#inicio" class="logo" aria-label="Amara, inicio">
+      <svg viewBox="0 0 64 48" aria-hidden="true" fill="currentColor">
+        <path d="M31 22C26 10 14 2 5 4c-6 2-3 14 4 18 5 3 13 3 22 1z"/>
+        <path d="M33 22C38 10 50 2 59 4c6 2 3 14-4 18-5 3-13 3-22 1z"/>
+        <path d="M31 25c-8 1-17 5-18 12-1 6 6 8 11 4 4-3 6-9 7-16z"/>
+        <path d="M33 25c8 1 17 5 18 12 1 6-6 8-11 4-4-3-6-9-7-16z"/>
+        <rect x="31" y="14" width="2" height="26" rx="1"/>
+      </svg>
+      <span><span class="logo-texto">AMARA</span><span class="logo-sub">Flores artesanales</span></span>
+    </a>
+
+    <nav aria-label="Principal">
+      <ul class="menu" id="menu">
+        <li><a href="#productos">Productos</a></li>
+        <li><a href="#como-pedir">Cómo pedir</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <div class="acciones">
+      <!-- SELECTOR DE TEMA -->
+      <div class="tema">
+        <button class="icono-btn" id="botonTema" aria-label="Cambiar apariencia" aria-haspopup="true" aria-expanded="false" aria-controls="menuTema">
+          <span id="iconoTema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>
+        </button>
+        <div class="tema-menu" id="menuTema" role="menu" aria-label="Apariencia">
+          <button role="menuitemradio" data-tema="light" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg> Claro</button>
+          <button role="menuitemradio" data-tema="dark" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg> Oscuro</button>
+          <button role="menuitemradio" data-tema="auto" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg> Automático</button>
+        </div>
+      </div>
+      <button class="icono-btn" id="abrirCarrito" aria-label="Abrir carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="contador vacio" id="contador">0</span>
+      </button>
+      <button class="icono-btn solo-movil" id="botonMenu" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+
+<!-- ===================== PORTADA ===================== -->
+<section class="portada">
+  <div class="contenedor">
+    <div>
+      <span class="nota-mano">Un detalle que habla sin palabras…</span>
+      <h1>Flores hechas a mano que duran para siempre</h1>
+      <p>Ramos, girasoles y flores tejidas una a una con limpiapipas. No se marchitan, no necesitan agua y llegan listas para regalar.</p>
+      <div class="portada-botones">
+        <a href="#productos" class="btn btn-principal">Ver productos</a>
+        <a href="#como-pedir" class="btn btn-borde">Cómo pedir</a>
+      </div>
+    </div>
+    <div class="portada-fotos">
+      <div class="foto-grande"><img class="img-cubrir" src="img/ramo-flores-luz.jpg" alt="Ramo de flores amarillas con luces cálidas y lazo lavanda"></div>
+      <div class="foto-chica"><img class="img-cubrir" src="img/girasol-maceta-2.jpg" alt="Girasol artesanal en maceta café"></div>
+      <span class="lazo">Hecho a mano</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== VENTAJAS ===================== -->
+<div class="contenedor">
+  <div class="ventajas">
+    <div class="ventaja">
+      <span class="ventaja-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10 4 12 3s0 3 0 6.5zM12 14.5c0 3.5 2 5.5 0 6.5s0-3 0-6.5zM9.5 12C6 12 4 14 3 12s3 0 6.5 0zM14.5 12c3.5 0 5.5-2 6.5 0s-3 0-6.5 0z"/></svg></span>
+      <div><h3>No se marchitan</h3><p>Hechas con limpiapipas de alta calidad, duran años.</p></div>
+    </div>
+    <div class="ventaja">
+      <span class="ventaja-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></span>
+      <div><h3>Luz cálida incluida</h3><p>Nuestros ramos traen luces que los hacen brillar de noche.</p></div>
+    </div>
+    <div class="ventaja">
+      <span class="ventaja-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/></svg></span>
+      <div><h3>Lista para regalar</h3><p>Empaque elegante, lazo y tarjeta con tu mensaje.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PRODUCTOS ===================== -->
+<section class="seccion" id="productos">
+  <div class="contenedor">
+    <h2>Nuestros productos</h2>
+    <p class="intro">Toca un producto para ver más fotos y opciones. Si quieres otro color o tamaño, escríbenos y lo hacemos a tu medida.</p>
+    <p class="chip-tasa"><span class="tasa-bcv">Consultando tasa BCV…</span></p>
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar por categoría"></div>
+    <input type="search" class="buscador" id="buscador" placeholder="Buscar: girasol, ramo, lirio…" aria-label="Buscar un producto">
+    <div class="grilla" id="grilla"></div>
+  </div>
+</section>
+
+<!-- ===================== PROMOCIÓN ===================== -->
+<section class="seccion" style="padding-top:0">
+  <div class="contenedor">
+    <div class="promo">
+      <div class="promo-texto">
+        <span class="nota-mano">Las flores amarillas siempre son una buena idea</span>
+        <h2>Combo ramo y girasol</h2>
+        <p>Nuestro ramo de flores amarillas con luz cálida, acompañado de un girasol en maceta dentro de su bolsa de regalo. El favorito para sorprender.</p>
+        <ul aria-label="Ideal para">
+          <li>Parejas</li><li>Amigos</li><li>Familia</li><li>O para ti</li>
+        </ul>
+        <button class="btn" data-ver="6">Pedir el combo</button>
+      </div>
+      <div class="promo-img"><img class="img-cubrir" src="img/promo-flores-amarillas.jpg" alt="Ramo de flores amarillas y girasol en bolsa de regalo"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CÓMO PEDIR ===================== -->
+<section class="seccion seccion-alt" id="como-pedir">
+  <div class="contenedor">
+    <h2>Cómo pedir</h2>
+    <p class="intro">Cada pieza se hace a mano, así que te recomendamos pedir con 2 o 3 días de anticipación.</p>
+    <ol class="pasos">
+      <li><h3>Elige tus flores</h3><p>Agrégalas al carrito y escoge la opción que prefieras.</p></li>
+      <li><h3>Escribe tu mensaje</h3><p>Lo ponemos en una tarjeta junto a tu regalo.</p></li>
+      <li><h3>Envía el pedido</h3><p>Te abrimos WhatsApp con todo listo para confirmar.</p></li>
+      <li><h3>Recibe tu detalle</h3><p>Lo entregamos empacado y listo para regalar.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== NOSOTROS ===================== -->
+<section class="seccion nosotros" id="nosotros">
+  <div class="contenedor">
+    <div class="nosotros-img"><img class="img-cubrir" src="img/lirio-azul.jpg" alt="Lirio azul hecho a mano con limpiapipas"></div>
+    <div>
+      <h2>Cada pétalo, doblado a mano</h2>
+      <span class="nota-mano">Porque los mejores sentimientos también se regalan en flores.</span>
+      <p>En Amara convertimos limpiapipas en girasoles, lirios y ramos completos. Cada flor toma tiempo y paciencia: doblamos los pétalos uno a uno, armamos los tallos y cuidamos cada detalle del empaque.</p>
+      <p>Hacemos piezas en el color que quieras, para cumpleaños, aniversarios, grados o simplemente para decir “pensé en ti”.</p>
+      <a href="#productos" class="btn btn-principal">Ver productos</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== OPINIONES ===================== -->
+<section class="seccion seccion-alt">
+  <div class="contenedor">
+    <h2>Lo que dicen nuestros clientes</h2>
+    <div class="opiniones">
+      <figure class="opinion"><div class="estrellas" aria-label="5 de 5 estrellas">★★★★★</div><blockquote>“Le regalé el ramo con luces a mi novia y no lo ha dejado de mostrar a todo el mundo.”</blockquote><figcaption>Sebastián G.</figcaption></figure>
+      <figure class="opinion"><div class="estrellas" aria-label="5 de 5 estrellas">★★★★★</div><blockquote>“El girasol en maceta está en mi escritorio desde hace meses y sigue perfecto.”</blockquote><figcaption>Valentina R.</figcaption></figure>
+      <figure class="opinion"><div class="estrellas" aria-label="5 de 5 estrellas">★★★★★</div><blockquote>“Pedí un lirio azul personalizado y quedó igual a lo que imaginaba. Súper detallistas.”</blockquote><figcaption>Daniela M.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALERÍA ===================== -->
+<section class="seccion">
+  <div class="contenedor">
+    <h2>Nuestro taller</h2>
+    <p class="intro">Más trabajos en Instagram: <a href="https://instagram.com/tu_cuenta" target="_blank" rel="noopener">@tu_cuenta</a></p>
+    <!-- GALERÍA: cambia o agrega fotos copiando un <figure> completo -->
+    <div class="galeria">
+      <figure><img class="img-cubrir" src="img/ramo-flores-luz.jpg" alt="Ramo de flores amarillas" loading="lazy"></figure>
+      <figure><img class="img-cubrir" src="img/girasol-maceta-1.jpg" alt="Girasol en maceta" loading="lazy"></figure>
+      <figure><img class="img-cubrir" src="img/rama-flores-amarillas.jpg" alt="Rama de flores amarillas" loading="lazy"></figure>
+      <figure><img class="img-cubrir" src="img/girasol-bolsa-regalo.jpg" alt="Girasol en bolsa de regalo" loading="lazy"></figure>
+      <figure><img class="img-cubrir" src="img/lirio-azul.jpg" alt="Lirio azul" loading="lazy"></figure>
+      <figure><img class="img-cubrir" src="img/girasol-maceta-2.jpg" alt="Girasol artesanal" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACTO ===================== -->
+<section class="seccion seccion-alt contacto" id="contacto">
+  <div class="contenedor">
+    <div>
+      <h2>Hablemos</h2>
+      <div class="dato"><strong>Pedidos y WhatsApp</strong><a href="https://wa.me/584125735490">+58 412-5735490</a></div>
+      <div class="dato"><strong>Horario de atención</strong>Lunes a sábado, 9:00 a. m. a 7:00 p. m.</div>
+      <div class="dato"><strong>Entregas</strong>Domicilios en tu ciudad. Envíos nacionales bajo pedido.</div>
+      <div class="dato"><strong>Correo</strong><a href="mailto:hola@amara.com">hola@amara.com</a></div>
+    </div>
+    <div class="mapa">
+      <!-- MAPA: en Google Maps busca tu local, toca Compartir > Insertar un mapa y pega aquí el <iframe> -->
+      <span>Aquí puedes poner el mapa de tu ubicación</span>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===================== PIE DE PÁGINA ===================== -->
+<footer class="pie">
+  <div class="contenedor">
+    <div class="logo"><span><span class="logo-texto">AMARA</span><span class="logo-sub">Flores artesanales hechas a mano</span></span></div>
+    <nav class="redes" aria-label="Redes sociales">
+      <a href="https://instagram.com/tu_cuenta" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://facebook.com/tu_cuenta" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://tiktok.com/@tu_cuenta" target="_blank" rel="noopener">TikTok</a>
+    </nav>
+    <p class="copy">© <span id="anio"></span> Amara. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<!-- ===================== CARRITO ===================== -->
+<div class="capa" id="capa"></div>
+<aside class="carrito" id="carrito" aria-label="Carrito" aria-hidden="true">
+  <div class="carrito-cab">
+    <h2>Tu pedido</h2>
+    <button class="icono-btn" id="cerrarCarrito" aria-label="Cerrar carrito">✕</button>
+  </div>
+  <ul class="carrito-lista" id="carritoLista"></ul>
+  <div class="carrito-pie">
+    <label for="mensajeTarjeta">Mensaje para la tarjeta (opcional)</label>
+    <textarea id="mensajeTarjeta" placeholder="Ej.: Feliz cumpleaños, mamá. Te quiero mucho."></textarea>
+    <div class="total"><span>Total</span><span style="text-align:right"><span id="total">$ 0,00</span><small id="totalBs" class="total-bs"></small></span></div>
+    <p class="tasa-carrito"><span class="tasa-bcv"></span></p>
+    <button class="btn btn-principal" id="enviarPedido">Enviar pedido por WhatsApp</button>
+  </div>
+</aside>
+
+<!-- ===================== MODAL DE PRODUCTO ===================== -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+  <div class="modal-caja">
+    <button class="icono-btn modal-cerrar" id="cerrarModal" aria-label="Cerrar">✕</button>
+    <div class="modal-galeria">
+      <div class="modal-img" id="modalImg"></div>
+      <div class="miniaturas" id="modalMiniaturas"></div>
+    </div>
+    <div class="modal-info">
+      <h2 id="modalTitulo"></h2>
+      <p id="modalDesc"></p>
+      <strong>Elige una opción</strong>
+      <div class="opciones" id="modalOpciones"></div>
+      <div class="producto-pie">
+        <span class="precio" id="modalPrecio"></span>
+        <button class="btn btn-principal" id="modalAgregar">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<a class="whatsapp-flotante" href="https://wa.me/584125735490" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.7a10.7 10.7 0 0 1-5.5-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.7 10.7 0 1 1 16 26.7zm5.9-8c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.8 8.8 0 0 1-4.4-3.8c-.3-.6.3-.5.9-1.7a.6.6 0 0 0 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3 14.4 14.4 0 0 0 5.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 0 0 2.2-1.5 2.7 2.7 0 0 0 .2-1.5c-.1-.2-.3-.3-.6-.4z"/></svg>
+</a>
+
+<script src="js/script.js"></script>
+</body>
+</html>
