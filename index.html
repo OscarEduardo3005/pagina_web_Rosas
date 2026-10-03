@@ -142,12 +142,12 @@
 <section class="seccion seccion-alt" id="como-pedir">
   <div class="contenedor">
     <h2>Cómo pedir</h2>
-    <p class="intro">Cada pieza se hace a mano, así que te recomendamos pedir con 2 o 3 días de anticipación.</p>
+    <p class="intro">Cada pieza se hace a mano, así que te recomendamos pedir con 2 o 3 días de anticipación. Para apartar tu pedido abonas el 50% y el resto lo cancelas el día de la entrega.</p>
     <ol class="pasos">
       <li><h3>Elige tus flores</h3><p>Agrégalas al carrito y escoge la opción que prefieras.</p></li>
       <li><h3>Escribe tu mensaje</h3><p>Lo ponemos en una tarjeta junto a tu regalo.</p></li>
-      <li><h3>Envía el pedido</h3><p>Te abrimos WhatsApp con todo listo para confirmar.</p></li>
-      <li><h3>Recibe tu detalle</h3><p>Lo entregamos empacado y listo para regalar.</p></li>
+      <li><h3>Envía y abona el 50%</h3><p>Te abrimos WhatsApp con tu pedido listo. Abonas la mitad para apartarlo.</p></li>
+      <li><h3>Recibe y cancela el resto</h3><p>Lo entregamos empacado y listo para regalar, y ahí pagas el otro 50%.</p></li>
     </ol>
   </div>
 </section>
@@ -239,6 +239,10 @@
     <textarea id="mensajeTarjeta" placeholder="Ej.: Feliz cumpleaños, mamá. Te quiero mucho."></textarea>
     <div class="total"><span>Total</span><span style="text-align:right"><span id="total">$ 0,00</span><small id="totalBs" class="total-bs"></small></span></div>
     <p class="tasa-carrito"><span class="tasa-bcv"></span></p>
+    <div class="pago-carrito" id="pagoCarrito" hidden>
+      <div><span>Abono hoy (<span class="pct-abono">50</span>%)</span><span id="abonoCarrito"></span></div>
+      <div><span>Al recibir tu pedido</span><span id="restoCarrito"></span></div>
+    </div>
     <button class="btn btn-principal" id="enviarPedido">Enviar pedido por WhatsApp</button>
   </div>
 </aside>
@@ -254,11 +258,31 @@
     <div class="modal-info">
       <h2 id="modalTitulo"></h2>
       <p id="modalDesc"></p>
+
+      <!-- AVISO DE PAGO: el porcentaje se cambia en js/script.js (PORCENTAJE_ABONO) -->
+      <div class="aviso-pago" role="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+        <div><span class="aviso-pago-titulo">Forma de pago</span><p id="modalPago"></p></div>
+      </div>
       <strong>Elige una opción</strong>
       <div class="opciones" id="modalOpciones"></div>
+
+      <!-- EXTRAS: la lista se edita en js/script.js (EXTRAS) -->
+      <button class="btn-extras" id="botonExtras" aria-expanded="false" aria-controls="panelExtras">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9.5l-4.2 1.9L12 16l-1.8-4.6L6 9.5l4.2-1.9z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
+        <span class="btn-extras-texto"><strong>Extras</strong><small id="resumenExtras">Personaliza tu pedido</small></span>
+        <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="panel-extras" id="panelExtras" hidden>
+        <p class="extras-ayuda">Agrega lo que quieras. Cada extra suma un costo adicional al precio.</p>
+        <ul class="lista-extras" id="listaExtras"></ul>
+      </div>
+
       <div class="producto-pie">
         <span class="precio" id="modalPrecio"></span>
         <button class="btn btn-principal" id="modalAgregar">Agregar al carrito</button>
+        <p class="desglose" id="modalDesglose"></p>
+        <p class="abono-corto" id="modalAbonoCorto"></p>
       </div>
     </div>
   </div>

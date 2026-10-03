@@ -20,6 +20,14 @@ const WHATSAPP = "584125735490";
    los precios en dólares.
    ========================================================= */
 const TASA_MANUAL = null;
+
+/* =========================================================
+   FORMA DE PAGO — porcentaje que el cliente abona por
+   adelantado para apartar su pedido. El resto se cancela
+   el día de la entrega. Cambia el 50 por otro número si
+   quieres otro porcentaje (por ejemplo 30 o 100).
+   ========================================================= */
+const PORCENTAJE_ABONO = 50;
 const APIS_TASA = [
   "https://ve.dolarapi.com/v1/dolares/oficial",
   "https://pydolarve.org/api/v1/dollar?page=bcv&monitor=usd",
@@ -51,6 +59,7 @@ const PRODUCTOS = [
     imagenes:["img/girasol-bolsa-regalo.jpg","img/girasol-maceta-1.jpg"],
     descripcion:"Nuestro girasol en maceta, entregado en bolsa blanca con ventana y asas de cinta. Listo para regalar.",
     etiqueta:"Listo para regalar",
+    extras:["flor","mariposa","lazo","tarjeta","chocolates","peluche"], // ya incluye bolsa
     opciones:[{nombre:"Con bolsa de ventana",precio:10}] },
 
   { id:4, nombre:"Rama de flores amarillas", categoria:"Flores sueltas",
@@ -72,6 +81,27 @@ const PRODUCTOS = [
 ];
 
 /* =========================================================
+   EXTRAS — complementos que el cliente puede sumar a cualquier
+   producto con el botón "Extras". Precios EN DÓLARES (cada
+   unidad); el monto en bolívares se calcula solo.
+   max: cuántas unidades de ese extra se pueden agregar.
+   Para que un producto muestre solo algunos extras, agrégale
+   extras:["flor","luces"] en la lista PRODUCTOS. Si no lo
+   tiene, muestra todos.
+   ⚠️ Los precios son de ejemplo: cámbialos por los tuyos.
+   ========================================================= */
+const EXTRAS = [
+  { id:"flor",       nombre:"Flor adicional",        detalle:"Del mismo estilo del producto",      precio:1.5, max:20 },
+  { id:"luces",      nombre:"Luces LED cálidas",     detalle:"Tira de luces que brillan de noche", precio:2,   max:3 },
+  { id:"mariposa",   nombre:"Mariposa decorativa",   detalle:"Se coloca entre las flores",         precio:1,   max:5 },
+  { id:"lazo",       nombre:"Lazo de otro color",    detalle:"Dinos el color por WhatsApp",        precio:1,   max:1 },
+  { id:"tarjeta",    nombre:"Tarjeta decorada",      detalle:"Con tu mensaje escrito a mano",      precio:1.5, max:1 },
+  { id:"chocolates", nombre:"Chocolates",            detalle:"Cajita de bombones",                 precio:4,   max:3 },
+  { id:"peluche",    nombre:"Peluche pequeño",       detalle:"Osito de unos 15 cm",                precio:6,   max:2 },
+  { id:"bolsa",      nombre:"Bolsa de regalo",       detalle:"Bolsa blanca con ventana",           precio:2,   max:2 },
+];
+
+/* =========================================================
    LÓGICA DE LA PÁGINA — normalmente no necesitas tocar esto
    ========================================================= */
 const $ = s => document.querySelector(s);
@@ -83,6 +113,12 @@ const bs = n => tasa ? "Bs. " + fmt(n * tasa) : "";
 const precioHTML = (n, desde = false) =>
   `${desde ? "<small>Desde</small>" : ""}${usd(n)}${tasa ? `<span class="precio-bs">${bs(n)}</span>` : ""}`;
 const precioTexto = n => tasa ? `${usd(n)} (${bs(n)})` : usd(n);
+/* Divide un monto en abono (hoy) y resto (al entregar) */
+const dividirPago = total => {
+  const abono = Math.round(total * PORCENTAJE_ABONO) / 100;
+  return { abono, resto: Math.round((total - abono) * 100) / 100 };
+};
+const montoHTML = n => `<strong>${usd(n)}</strong>${tasa ? ` <span class="monto-bs">(${bs(n)})</span>` : ""}`;
 
 /* Obtener la tasa: manual → guardada (si es reciente) → APIs */
 function leerTasa(d) {
@@ -164,7 +200,7 @@ function pintarTasa(resaltar = false) {
   }
   el.forEach(e => e.textContent = texto);
   pintarProductos(); pintarCarrito();
-  if (actual && $("#modal").classList.contains("visible")) $("#modalPrecio").innerHTML = precioHTML(actual.opciones[opcionSel].precio);
+  if (actual && $("#modal").classList.contains("visible")) pintarExtras();
   // Destaca brevemente los montos en bolívares cuando la tasa cambia
   if (resaltar) document.querySelectorAll(".precio-bs, .total-bs, .item small, .chip-tasa").forEach(e => {
     e.classList.remove("tasa-cambio"); void e.offsetWidth; e.classList.add("tasa-cambio");
@@ -205,7 +241,10 @@ function pintarProductos() {
         <p>${p.descripcion}</p>
         <div class="producto-pie">
           <span class="precio">${precioHTML(p.opciones[0].precio, p.opciones.length > 1)}</span>
-          <button class="btn-agregar" data-ver="${p.id}">Agregar</button>
+          <div class="botones-card">
+            <button class="btn-extras-card" data-ver="${p.id}" data-extras>Extras</button>
+            <button class="btn-agregar" data-ver="${p.id}">Agregar</button>
+          </div>
         </div>
       </div>
     </article>`).join("")
@@ -215,18 +254,77 @@ function pintarProductos() {
 /* Cualquier botón con data-ver abre el producto (catálogo y promoción) */
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-ver]");
-  if (b) abrirModal(+b.dataset.ver);
+  if (b) abrirModal(+b.dataset.ver, b.hasAttribute("data-extras"));
 });
 
 /* Modal */
-let actual = null, opcionSel = 0, ultimoFoco = null;
+let actual = null, opcionSel = 0, ultimoFoco = null, extrasSel = {};
+
+/* Extras disponibles para un producto */
+const extrasDe = p => p.extras ? EXTRAS.filter(e => p.extras.includes(e.id)) : EXTRAS;
+/* Costo de un conjunto de extras { id: cantidad } */
+const costoExtras = sel => Object.entries(sel || {}).reduce((s, [id, n]) => {
+  const e = EXTRAS.find(x => x.id === id); return s + (e ? e.precio * n : 0);
+}, 0);
+/* Texto: "2 x Flor adicional, 1 x Chocolates" */
+const textoExtras = sel => Object.entries(sel || {}).filter(([, n]) => n > 0)
+  .map(([id, n]) => { const e = EXTRAS.find(x => x.id === id); return e ? `${n} x ${e.nombre}` : ""; })
+  .filter(Boolean).join(", ");
+
+function pintarExtras() {
+  $("#listaExtras").innerHTML = extrasDe(actual).map(e => {
+    const n = extrasSel[e.id] || 0;
+    return `<li class="extra${n ? " activo" : ""}">
+      <div class="extra-info">
+        <strong>${e.nombre}</strong>
+        ${e.detalle ? `<small>${e.detalle}</small>` : ""}
+        <span class="extra-precio">+ ${usd(e.precio)}${tasa ? ` · ${bs(e.precio)}` : ""}</span>
+      </div>
+      <div class="cantidad" role="group" aria-label="Cantidad de ${e.nombre}">
+        <button data-extra-menos="${e.id}" aria-label="Quitar ${e.nombre}" ${n ? "" : "disabled"}>−</button>
+        <span aria-live="polite">${n}</span>
+        <button data-extra-mas="${e.id}" aria-label="Agregar ${e.nombre}" ${n >= e.max ? "disabled" : ""}>+</button>
+      </div>
+    </li>`;
+  }).join("");
+  actualizarPrecioModal();
+}
+function actualizarPrecioModal() {
+  const base = actual.opciones[opcionSel].precio, extra = costoExtras(extrasSel);
+  const cant = Object.values(extrasSel).reduce((a, b) => a + b, 0);
+  $("#modalPrecio").innerHTML = precioHTML(base + extra);
+  const { abono, resto } = dividirPago(base + extra);
+  $("#modalAbonoCorto").innerHTML = PORCENTAJE_ABONO >= 100 ? "Pago completo por adelantado"
+    : `Abonas hoy <strong>${usd(abono)}</strong> (${PORCENTAJE_ABONO}%) · el resto al recibir`;
+  $("#modalPago").innerHTML = PORCENTAJE_ABONO >= 100
+    ? `Este producto se cancela <strong>completo por adelantado</strong>: ${montoHTML(abono)}.`
+    : `Para apartar tu pedido abonas el <strong>${PORCENTAJE_ABONO}%</strong> por adelantado: ${montoHTML(abono)}.<br>
+       El <strong>${100 - PORCENTAJE_ABONO}% restante</strong> se cancela el día de la entrega: ${montoHTML(resto)}.`;
+  $("#modalDesglose").textContent = extra ? `Incluye ${usd(extra)} en extras` : "";
+  $("#resumenExtras").textContent = cant ? `${cant} ${cant === 1 ? "extra" : "extras"} · + ${usd(extra)}` : "Personaliza tu pedido";
+}
+function abrirExtras(abrir) {
+  $("#panelExtras").hidden = !abrir;
+  $("#botonExtras").setAttribute("aria-expanded", abrir);
+}
+$("#botonExtras").addEventListener("click", () => abrirExtras($("#panelExtras").hidden));
+$("#listaExtras").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b || b.disabled) return;
+  const id = b.dataset.extraMas || b.dataset.extraMenos;
+  const ex = EXTRAS.find(x => x.id === id); if (!ex) return;
+  const n = (extrasSel[id] || 0) + (b.dataset.extraMas ? 1 : -1);
+  if (n <= 0) delete extrasSel[id]; else extrasSel[id] = Math.min(n, ex.max);
+  pintarExtras();
+  const mismo = $(`#listaExtras [${b.dataset.extraMas ? "data-extra-mas" : "data-extra-menos"}="${id}"]`);
+  (mismo && !mismo.disabled ? mismo : $(`#listaExtras [data-extra-mas="${id}"]`))?.focus({ preventScroll: true });
+});
 function mostrarFoto(i) {
   $("#modalImg").innerHTML = foto(actual.imagenes[i], actual.nombre, false);
   document.querySelectorAll(".miniaturas button").forEach((b, j) => b.setAttribute("aria-pressed", j === i));
 }
-function abrirModal(id) {
+function abrirModal(id, conExtras = false) {
   actual = PRODUCTOS.find(p => p.id === id); if (!actual) return;
-  opcionSel = 0; ultimoFoco = document.activeElement;
+  opcionSel = 0; extrasSel = {}; ultimoFoco = document.activeElement;
   $("#modalMiniaturas").innerHTML = actual.imagenes.length > 1
     ? actual.imagenes.map((src, i) => `<button data-foto="${i}" aria-label="Ver foto ${i + 1}">${foto(src, "")}</button>`).join("")
     : "";
@@ -235,7 +333,9 @@ function abrirModal(id) {
   $("#modalDesc").textContent = actual.descripcion;
   $("#modalOpciones").innerHTML = actual.opciones.map((o, i) =>
     `<button class="opcion" data-i="${i}" aria-pressed="${i === 0}">${o.nombre}</button>`).join("");
-  $("#modalPrecio").innerHTML = precioHTML(actual.opciones[0].precio);
+  pintarExtras();
+  abrirExtras(conExtras);
+  $(".modal-caja").scrollTop = 0;
   $("#modal").classList.add("visible"); $("#capa").classList.add("visible");
   $("#cerrarModal").focus({ preventScroll: true });
 }
@@ -252,20 +352,28 @@ $("#modalOpciones").addEventListener("click", e => {
   const b = e.target.closest(".opcion"); if (!b) return;
   opcionSel = +b.dataset.i;
   document.querySelectorAll(".opcion").forEach(o => o.setAttribute("aria-pressed", o === b));
-  $("#modalPrecio").innerHTML = precioHTML(actual.opciones[opcionSel].precio);
+  actualizarPrecioModal();
 });
-$("#modalAgregar").addEventListener("click", () => { agregar(actual, opcionSel); cerrarModal(); });
+$("#modalAgregar").addEventListener("click", () => { agregar(actual, opcionSel, extrasSel); cerrarModal(); });
 $("#cerrarModal").addEventListener("click", cerrarModal);
 $("#modal").addEventListener("click", e => { if (e.target.id === "modal") cerrarModal(); });
 
 /* Carrito */
-function agregar(p, i) {
-  const clave = p.id + "-" + i;
+function agregar(p, i, extras = {}) {
+  const ex = Object.fromEntries(Object.entries(extras).filter(([, n]) => n > 0).sort());
+  const firma = Object.entries(ex).map(([id, n]) => id + n).join("_");
+  const clave = p.id + "-" + i + (firma ? "-" + firma : "");
   const existe = carrito.find(x => x.clave === clave);
   if (existe) existe.cantidad++;
-  else carrito.push({ clave, id: p.id, opcion: i, cantidad: 1 });
-  guardar(); pintarCarrito(); aviso(`Agregado: ${p.nombre}`);
+  else carrito.push({ clave, id: p.id, opcion: i, extras: ex, cantidad: 1 });
+  guardar(); pintarCarrito();
+  aviso(firma ? `Agregado: ${p.nombre} con extras` : `Agregado: ${p.nombre}`);
 }
+/* Precio de una unidad (producto + sus extras) */
+const precioUnidad = x => {
+  const p = PRODUCTOS.find(q => q.id === x.id);
+  return p.opciones[x.opcion].precio + costoExtras(x.extras);
+};
 function pintarCarrito() {
   let total = 0, unidades = 0;
   carrito = carrito.filter(x => {
@@ -274,21 +382,28 @@ function pintarCarrito() {
   });
   $("#carritoLista").innerHTML = carrito.length ? carrito.map(x => {
     const p = PRODUCTOS.find(q => q.id === x.id), o = p.opciones[x.opcion];
-    total += o.precio * x.cantidad; unidades += x.cantidad;
+    const sub = precioUnidad(x) * x.cantidad, ext = textoExtras(x.extras);
+    total += sub; unidades += x.cantidad;
     return `<li class="item">
       <div class="item-img">${foto(p.imagenes[0], "")}</div>
       <div><h3>${p.nombre}</h3><small>${o.nombre}</small>
+        ${ext ? `<small class="item-extras">+ ${ext} (${usd(costoExtras(x.extras))} c/u)</small>` : ""}
         <div class="cantidad">
           <button data-menos="${x.clave}" aria-label="Quitar uno">−</button>
           <span>${x.cantidad}</span>
           <button data-mas="${x.clave}" aria-label="Agregar uno">+</button>
         </div></div>
-      <div style="text-align:right"><strong>${usd(o.precio * x.cantidad)}</strong>${tasa ? `<br><small>${bs(o.precio * x.cantidad)}</small>` : ""}<br>
+      <div style="text-align:right"><strong>${usd(sub)}</strong>${tasa ? `<br><small>${bs(sub)}</small>` : ""}<br>
         <button class="quitar" data-quitar="${x.clave}">Quitar</button></div>
     </li>`;
   }).join("") : `<li class="carrito-vacio">Tu carrito está vacío.<br>Agrega unas flores para empezar tu pedido.</li>`;
   $("#total").textContent = usd(total);
   $("#totalBs").textContent = tasa ? bs(total) : "";
+  const pago = dividirPago(total);
+  $("#pagoCarrito").hidden = !carrito.length || PORCENTAJE_ABONO >= 100;
+  document.querySelectorAll(".pct-abono").forEach(e => e.textContent = PORCENTAJE_ABONO);
+  $("#abonoCarrito").innerHTML = montoHTML(pago.abono);
+  $("#restoCarrito").innerHTML = montoHTML(pago.resto);
   $("#contador").textContent = unidades;
   $("#contador").classList.toggle("vacio", unidades === 0);
   $("#enviarPedido").disabled = !carrito.length;
@@ -314,12 +429,18 @@ $("#enviarPedido").addEventListener("click", () => {
   let total = 0;
   const lineas = carrito.map(x => {
     const p = PRODUCTOS.find(q => q.id === x.id), o = p.opciones[x.opcion];
-    total += o.precio * x.cantidad;
-    return `• ${x.cantidad} x ${p.nombre} (${o.nombre}) – ${precioTexto(o.precio * x.cantidad)}`;
+    const sub = precioUnidad(x) * x.cantidad, ext = textoExtras(x.extras);
+    total += sub;
+    return `• ${x.cantidad} x ${p.nombre} (${o.nombre}) – ${precioTexto(sub)}` +
+      (ext ? `\n   Extras por unidad: ${ext} (+ ${usd(costoExtras(x.extras))})` : "");
   });
   const tarjeta = $("#mensajeTarjeta").value.trim();
   const mensaje = `Hola Amara, quiero hacer este pedido:\n\n${lineas.join("\n")}\n\nTotal: ${precioTexto(total)}` +
     (tasa ? `\nTasa BCV usada: Bs. ${fmt(tasa)}` : "") +
+    (PORCENTAJE_ABONO < 100
+      ? `\n\nForma de pago:\n• Abono por adelantado (${PORCENTAJE_ABONO}%): ${precioTexto(dividirPago(total).abono)}` +
+        `\n• Restante el día de la entrega (${100 - PORCENTAJE_ABONO}%): ${precioTexto(dividirPago(total).resto)}`
+      : "") +
     (tarjeta ? `\n\nMensaje para la tarjeta: "${tarjeta}"` : "") +
     `\n\nMi nombre:\nDirección de entrega:\nFecha de entrega:`;
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`, "_blank");
