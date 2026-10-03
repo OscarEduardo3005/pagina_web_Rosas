@@ -28,6 +28,42 @@ const TASA_MANUAL = null;
    quieres otro porcentaje (por ejemplo 30 o 100).
    ========================================================= */
 const PORCENTAJE_ABONO = 50;
+
+/* =========================================================
+   MÉTODOS DE PAGO — se muestran en el carrito (con botones
+   para copiar cada dato), en la sección de contacto y en el
+   mensaje de WhatsApp.
+   moneda: "Bs" muestra el monto a pagar en bolívares;
+           "USD" lo muestra en dólares (para Zelle, efectivo…).
+   datos:  etiqueta y valor que ve el cliente. "copiar" es lo
+           que se copia al tocar el botón (sin puntos ni
+           paréntesis, para pegarlo directo en el banco).
+   Para agregar otro método, copia el bloque { ... } completo,
+   pégalo debajo (separado por una coma) y cambia los datos.
+   Si hay más de uno, el cliente elige cuál usar.
+   ========================================================= */
+const METODOS_PAGO = [
+  {
+    id: "pagomovil",
+    nombre: "Pago Móvil",
+    moneda: "Bs",
+    datos: [
+      { etiqueta: "Banco",    valor: "Venezuela (0102)", copiar: "0102 Banco de Venezuela" },
+      { etiqueta: "C.I.",     valor: "31.754.872",       copiar: "31754872" },
+      { etiqueta: "Teléfono", valor: "(0412) 573.54.90", copiar: "04125735490" },
+    ],
+  },
+  // Ejemplo para más adelante:
+  // {
+  //   id: "zelle",
+  //   nombre: "Zelle",
+  //   moneda: "USD",
+  //   datos: [
+  //     { etiqueta: "Correo",  valor: "correo@ejemplo.com", copiar: "correo@ejemplo.com" },
+  //     { etiqueta: "Titular", valor: "Nombre Apellido",    copiar: "Nombre Apellido" },
+  //   ],
+  // },
+];
 const APIS_TASA = [
   "https://ve.dolarapi.com/v1/dolares/oficial",
   "https://pydolarve.org/api/v1/dollar?page=bcv&monitor=usd",
@@ -100,6 +136,63 @@ const EXTRAS = [
   { id:"peluche",    nombre:"Peluche pequeño",       detalle:"Osito de unos 15 cm",                precio:6,   max:2 },
   { id:"bolsa",      nombre:"Bolsa de regalo",       detalle:"Bolsa blanca con ventana",           precio:2,   max:2 },
 ];
+
+/* =========================================================
+   CREA TU RAMO — opciones del creador personalizado.
+   Todos los precios EN DÓLARES. ⚠️ Son de ejemplo.
+   tipos:   qué puede crear el cliente. precioBase es lo que
+            cuesta la presentación (papel, maceta, tallo…).
+            minFlores / maxFlores: límites de flores.
+   flores:  precio por cada flor.
+   colores: colores disponibles para las flores (hex = color
+            que se dibuja en la vista previa).
+   extras:  cuáles de la lista EXTRAS se ofrecen aquí.
+   ========================================================= */
+const CREADOR = {
+  tipos: [
+    { id:"ramo",   nombre:"Ramo",             carrito:"Ramo personalizado",    detalle:"Envuelto en papel con lazo",   precioBase:5, minFlores:3, maxFlores:40 },
+    { id:"maceta", nombre:"Flores en maceta", carrito:"Maceta personalizada",  detalle:"Maceta tejida en limpiapipas", precioBase:4, minFlores:1, maxFlores:5 },
+    { id:"suelta", nombre:"Flor individual",  carrito:"Flor personalizada",    detalle:"Con tallo y hojas",            precioBase:1, minFlores:1, maxFlores:1 },
+  ],
+  flores: [
+    // genero: "m" (el girasol) o "f" (la rosa), para escribir bien el color: "rosa roja", "lirio rojo"
+    { id:"girasol",   nombre:"Girasol",      plural:"Girasoles",       genero:"m", precio:3 },
+    { id:"pequena",   nombre:"Flor pequeña", plural:"Flores pequeñas", genero:"f", precio:1.5 },
+    { id:"rosa",      nombre:"Rosa",         plural:"Rosas",           genero:"f", precio:3 },
+    { id:"lirio",     nombre:"Lirio",        plural:"Lirios",          genero:"m", precio:4 },
+    { id:"tulipan",   nombre:"Tulipán",      plural:"Tulipanes",       genero:"m", precio:2.5 },
+  ],
+  colores: [
+    { id:"amarillo", nombre:"amarillo", hex:"#F6C21C" },
+    { id:"naranja",  nombre:"naranja",  hex:"#F28C28" },
+    { id:"rojo",     nombre:"rojo",     hex:"#D7263D" },
+    { id:"rosado",   nombre:"rosado",   hex:"#F48FB1" },
+    { id:"morado",   nombre:"morado",   hex:"#7B4FC9" },
+    { id:"azul",     nombre:"azul",     hex:"#1E5BD8" },
+    { id:"blanco",   nombre:"blanco",   hex:"#F7F4EC" },
+  ],
+  papeles: [
+    { id:"blanco",   nombre:"Blanco",   hex:"#F4F1EA" },
+    { id:"kraft",    nombre:"Kraft",    hex:"#C9A27A" },
+    { id:"negro",    nombre:"Negro",    hex:"#2B2730" },
+    { id:"rosado",   nombre:"Rosado",   hex:"#F6C9D6" },
+    { id:"lavanda",  nombre:"Lavanda",  hex:"#CFC3F2" },
+  ],
+  lazos: [
+    { id:"lavanda",  nombre:"Lavanda",  hex:"#A99BE6" },
+    { id:"blanco",   nombre:"Blanco",   hex:"#FFFFFF" },
+    { id:"rojo",     nombre:"Rojo",     hex:"#C8102E" },
+    { id:"dorado",   nombre:"Dorado",   hex:"#D4AF37" },
+    { id:"rosado",   nombre:"Rosado",   hex:"#F48FB1" },
+  ],
+  macetas: [
+    { id:"cafe",       nombre:"Café",       hex:"#6B4A32" },
+    { id:"blanco",     nombre:"Blanca",     hex:"#F2EFE8" },
+    { id:"negro",      nombre:"Negra",      hex:"#2B2B2B" },
+    { id:"terracota",  nombre:"Terracota",  hex:"#C0643C" },
+  ],
+  extras: ["luces","mariposa","tarjeta","chocolates","peluche","bolsa"],
+};
 
 /* =========================================================
    LÓGICA DE LA PÁGINA — normalmente no necesitas tocar esto
@@ -201,6 +294,7 @@ function pintarTasa(resaltar = false) {
   el.forEach(e => e.textContent = texto);
   pintarProductos(); pintarCarrito();
   if (actual && $("#modal").classList.contains("visible")) pintarExtras();
+  if (typeof pintarCreador === "function" && $("#crTipos")) conFoco(pintarCreador);
   // Destaca brevemente los montos en bolívares cuando la tasa cambia
   if (resaltar) document.querySelectorAll(".precio-bs, .total-bs, .item small, .chip-tasa").forEach(e => {
     e.classList.remove("tasa-cambio"); void e.offsetWidth; e.classList.add("tasa-cambio");
@@ -230,7 +324,19 @@ function pintarProductos() {
   const lista = PRODUCTOS.filter(p =>
     (categoria === "Todos" || p.categoria === categoria) &&
     (p.nombre + " " + p.descripcion + " " + p.categoria).toLowerCase().includes(busqueda));
-  $("#grilla").innerHTML = lista.length ? lista.map(p => `
+  const cta = categoria === "Todos" && !busqueda ? `
+    <article class="producto cta-creador">
+      <a href="#crea-tu-ramo" class="cta-creador-enlace">
+        <span class="cta-creador-arte" aria-hidden="true">${svgCreacion(EJEMPLO_CREACION)}</span>
+        <span class="cta-creador-texto">
+          <span class="nota-mano">¿No encuentras lo que buscas?</span>
+          <strong>Crea tu propio ramo</strong>
+          <span>Elige flores, colores, papel y extras. Te mostramos cómo queda y cuánto cuesta.</span>
+          <span class="btn btn-principal">Empezar a crear</span>
+        </span>
+      </a>
+    </article>` : "";
+  $("#grilla").innerHTML = cta + (lista.length ? lista.map(p => `
     <article class="producto">
       <button class="producto-img" data-ver="${p.id}" aria-label="Ver detalles de ${p.nombre}">
         ${foto(p.imagenes[0], p.nombre)}
@@ -248,7 +354,7 @@ function pintarProductos() {
         </div>
       </div>
     </article>`).join("")
-    : `<p class="sin-resultados">No encontramos productos con esa palabra. Prueba con “girasol” o elige “Todos”.</p>`;
+    : `<p class="sin-resultados">No encontramos productos con esa palabra. Prueba con “girasol” o elige “Todos”.</p>`);
 }
 
 /* Cualquier botón con data-ver abre el producto (catálogo y promoción) */
@@ -369,25 +475,38 @@ function agregar(p, i, extras = {}) {
   guardar(); pintarCarrito();
   aviso(firma ? `Agregado: ${p.nombre} con extras` : `Agregado: ${p.nombre}`);
 }
-/* Precio de una unidad (producto + sus extras) */
+/* Precio de una unidad (producto + sus extras, o creación personalizada) */
 const precioUnidad = x => {
+  if (x.creacion) return precioCreacion(x.creacion);
   const p = PRODUCTOS.find(q => q.id === x.id);
   return p.opciones[x.opcion].precio + costoExtras(x.extras);
 };
+/* Datos para mostrar cada línea del carrito */
+function infoItem(x) {
+  if (x.creacion) {
+    const d = describirCreacion(x.creacion), t = crBuscar("tipos", x.creacion.tipo);
+    return { nombre: t.carrito, detalle: d.flores, detalle2: d.presentacion,
+      ext: textoExtras(x.creacion.extras), costoExt: costoExtras(x.creacion.extras),
+      img: `<span class="item-svg">${svgCreacion(x.creacion)}</span>`, idea: x.creacion.idea };
+  }
+  const p = PRODUCTOS.find(q => q.id === x.id), o = p.opciones[x.opcion];
+  return { nombre: p.nombre, detalle: o.nombre, ext: textoExtras(x.extras), costoExt: costoExtras(x.extras),
+    img: foto(p.imagenes[0], "") };
+}
+const itemValido = x => x.creacion ? creacionValida(x.creacion)
+  : (() => { const p = PRODUCTOS.find(q => q.id === x.id); return p && p.opciones[x.opcion]; })();
 function pintarCarrito() {
   let total = 0, unidades = 0;
-  carrito = carrito.filter(x => {
-    const p = PRODUCTOS.find(q => q.id === x.id);
-    return p && p.opciones[x.opcion];
-  });
+  carrito = carrito.filter(itemValido);
   $("#carritoLista").innerHTML = carrito.length ? carrito.map(x => {
-    const p = PRODUCTOS.find(q => q.id === x.id), o = p.opciones[x.opcion];
-    const sub = precioUnidad(x) * x.cantidad, ext = textoExtras(x.extras);
+    const i = infoItem(x), sub = precioUnidad(x) * x.cantidad;
     total += sub; unidades += x.cantidad;
     return `<li class="item">
-      <div class="item-img">${foto(p.imagenes[0], "")}</div>
-      <div><h3>${p.nombre}</h3><small>${o.nombre}</small>
-        ${ext ? `<small class="item-extras">+ ${ext} (${usd(costoExtras(x.extras))} c/u)</small>` : ""}
+      <div class="item-img">${i.img}</div>
+      <div><h3>${i.nombre}</h3><small>${i.detalle}</small>
+        ${i.detalle2 ? `<small>${i.detalle2}</small>` : ""}
+        ${i.ext ? `<small class="item-extras">+ ${i.ext} (${usd(i.costoExt)} c/u)</small>` : ""}
+        ${i.idea ? `<small class="item-idea">“${esc(i.idea)}”</small>` : ""}
         <div class="cantidad">
           <button data-menos="${x.clave}" aria-label="Quitar uno">−</button>
           <span>${x.cantidad}</span>
@@ -404,6 +523,7 @@ function pintarCarrito() {
   document.querySelectorAll(".pct-abono").forEach(e => e.textContent = PORCENTAJE_ABONO);
   $("#abonoCarrito").innerHTML = montoHTML(pago.abono);
   $("#restoCarrito").innerHTML = montoHTML(pago.resto);
+  if (typeof pintarMetodos === "function" && $("#metodosCarrito")) pintarMetodos(pago.abono);
   $("#contador").textContent = unidades;
   $("#contador").classList.toggle("vacio", unidades === 0);
   $("#enviarPedido").disabled = !carrito.length;
@@ -424,15 +544,307 @@ $("#cerrarCarrito").addEventListener("click", cerrarCarrito);
 $("#capa").addEventListener("click", () => { cerrarCarrito(); cerrarModal(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") { cerrarModal(); cerrarCarrito(); } });
 
+/* =========================================================
+   MÉTODOS DE PAGO (carrito y contacto)
+   ========================================================= */
+let metodoSel = METODOS_PAGO[0]?.id || null;
+try { const m = localStorage.getItem("metodo-amara"); if (METODOS_PAGO.some(x => x.id === m)) metodoSel = m; } catch (e) {}
+const metodoActual = () => METODOS_PAGO.find(m => m.id === metodoSel);
+/* Monto en la moneda del método: "Bs. 8.665,60" o "$ 10,00" */
+const montoMetodo = (m, n) => m.moneda === "Bs" && tasa ? bs(n) : usd(n);
+/* Lo que se copia: "8665,60" (sin puntos de miles, como lo piden los bancos) */
+const montoCopiar = (m, n) => (m.moneda === "Bs" && tasa ? n * tasa : n).toFixed(2).replace(".", ",");
+const ICONO_COPIAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+
+const datosHTML = m => `<dl class="datos-pago">${m.datos.map(d => `
+  <div><dt>${d.etiqueta}</dt><dd>${d.valor}</dd>
+    <button class="btn-copiar" data-copiar="${d.copiar ?? d.valor}" aria-label="Copiar ${d.etiqueta}">${ICONO_COPIAR}<span>Copiar</span></button></div>`).join("")}</dl>`;
+
+/* Texto que se copia con "Copiar todos los datos" */
+const textoCopiarTodo = (m, monto) =>
+  [m.nombre, ...m.datos.map(d => `${d.etiqueta}: ${d.copiar ?? d.valor}`)]
+    .concat(monto !== undefined ? [`Monto: ${montoCopiar(m, monto)}`] : [])
+    .join("\n");
+const botonCopiarTodo = (m, monto) => `
+  <button class="btn-copiar-todo" data-copiar="${textoCopiarTodo(m, monto).replace(/"/g, "&quot;")}">
+    ${ICONO_COPIAR}<span>${monto !== undefined ? "Copiar todo con el monto" : "Copiar todos los datos"}</span>
+  </button>`;
+
+function pintarMetodos(abono) {
+  const caja = $("#metodosCarrito");
+  if (!METODOS_PAGO.length) { caja.hidden = true; return; }
+  caja.hidden = !carrito.length;
+  const m = metodoActual() || METODOS_PAGO[0];
+  caja.innerHTML = `
+    <span class="metodos-titulo">Método de pago</span>
+    ${METODOS_PAGO.length > 1 ? `<div class="metodos-opciones" role="radiogroup" aria-label="Elige cómo pagar">
+      ${METODOS_PAGO.map(x => `<button role="radio" aria-checked="${x.id === m.id}" data-metodo="${x.id}">${x.nombre}</button>`).join("")}
+    </div>` : `<strong class="metodo-unico">${m.nombre}</strong>`}
+    ${datosHTML(m)}
+    <div class="monto-pagar">
+      <span>Monto del abono${PORCENTAJE_ABONO >= 100 ? "" : ` (${PORCENTAJE_ABONO}%)`}<strong>${montoMetodo(m, abono)}</strong></span>
+      <button class="btn-copiar" data-copiar="${montoCopiar(m, abono)}" aria-label="Copiar monto">${ICONO_COPIAR}<span>Copiar</span></button>
+    </div>
+    ${botonCopiarTodo(m, abono)}
+    <p class="metodos-nota">Después de pagar, envía el pedido y adjunta la captura del pago en WhatsApp.</p>`;
+}
+function pintarMetodosContacto() {
+  const c = $("#metodosContacto"); if (!c) return;
+  c.innerHTML = METODOS_PAGO.map(m => `<div class="metodo-contacto"><strong>${m.nombre}</strong>${datosHTML(m)}${botonCopiarTodo(m)}</div>`).join("");
+  c.closest(".dato").hidden = !METODOS_PAGO.length;
+}
+$("#metodosCarrito").addEventListener("click", e => {
+  const b = e.target.closest("[data-metodo]"); if (!b) return;
+  metodoSel = b.dataset.metodo;
+  try { localStorage.setItem("metodo-amara", metodoSel); } catch (err) {}
+  pintarCarrito();
+  $(`[data-metodo="${metodoSel}"]`)?.focus({ preventScroll: true });
+});
+
+/* Copiar al portapapeles (cualquier botón con data-copiar) */
+async function copiarTexto(t) {
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch (e) {
+    const a = document.createElement("textarea"); a.value = t; a.setAttribute("readonly", "");
+    a.style.position = "fixed"; a.style.opacity = "0"; document.body.appendChild(a); a.select();
+    let ok = false; try { ok = document.execCommand("copy"); } catch (err) {}
+    a.remove(); return ok;
+  }
+}
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-copiar]"); if (!b) return;
+  const ok = await copiarTexto(b.dataset.copiar);
+  const s = b.querySelector("span"); const antes = s.textContent;
+  s.textContent = ok ? "¡Copiado!" : "No se pudo";
+  b.classList.toggle("copiado", ok);
+  if (ok && b.classList.contains("btn-copiar-todo")) aviso("Datos copiados. Pégalos en la app de tu banco.");
+  setTimeout(() => { s.textContent = antes; b.classList.remove("copiado"); }, 1600);
+});
+
+/* =========================================================
+   CREA TU RAMO
+   ========================================================= */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const crBuscar = (lista, id) => CREADOR[lista].find(x => x.id === id);
+/* "Rosa roja", "3 girasoles amarillos", "2 lirios azules" */
+function nombreFlor(florId, colorId, n = 1) {
+  const f = crBuscar("flores", florId), c = crBuscar("colores", colorId), plural = n > 1;
+  let col = c.nombre;
+  if (col.endsWith("o")) { if (f.genero === "f") col = col.slice(0, -1) + "a"; if (plural) col += "s"; }
+  else if (!col.endsWith("a") && plural) col += "es";
+  return `${plural ? (f.plural || f.nombre) : f.nombre} ${col}`;
+}
+const totalFlores = cfg => Object.values(cfg.flores || {}).reduce((a, b) => a + b, 0);
+const costoFlores = cfg => Object.entries(cfg.flores || {}).reduce((s, [k, n]) => s + (crBuscar("flores", k.split("|")[0])?.precio || 0) * n, 0);
+const precioCreacion = cfg => (crBuscar("tipos", cfg.tipo)?.precioBase || 0) + costoFlores(cfg) + costoExtras(cfg.extras);
+function creacionValida(cfg) {
+  const t = crBuscar("tipos", cfg?.tipo); if (!t) return false;
+  const n = totalFlores(cfg);
+  return n >= t.minFlores && n <= t.maxFlores &&
+    Object.keys(cfg.flores).every(k => { const [f, c] = k.split("|"); return crBuscar("flores", f) && crBuscar("colores", c); });
+}
+function describirCreacion(cfg) {
+  const flores = Object.entries(cfg.flores).map(([k, n]) => {
+    const [f, c] = k.split("|"); return `${n} ${nombreFlor(f, c, n).toLowerCase()}`;
+  }).join(", ");
+  const partes = [];
+  if (cfg.tipo === "ramo") partes.push(`Papel ${crBuscar("papeles", cfg.papel)?.nombre.toLowerCase()}`, `lazo ${crBuscar("lazos", cfg.lazo)?.nombre.toLowerCase()}`);
+  if (cfg.tipo === "maceta") partes.push(`Maceta ${crBuscar("macetas", cfg.maceta)?.nombre.toLowerCase()}`);
+  if (cfg.tipo === "suelta") partes.push(`Lazo ${crBuscar("lazos", cfg.lazo)?.nombre.toLowerCase()}`);
+  return { flores, presentacion: partes.join(", ") };
+}
+
+/* ---------- Dibujo de la vista previa (SVG) ---------- */
+function svgFlor(tipo, hex, x, y, r) {
+  const borde = hex.toUpperCase() === "#F7F4EC" ? ' stroke="#CFC6B4" stroke-width="1"' : "";
+  const petalos = (n, rx, ry, off) => Array.from({ length: n }, (_, i) =>
+    `<ellipse cx="${x}" cy="${y - off}" rx="${rx}" ry="${ry}" fill="${hex}"${borde} transform="rotate(${i * 360 / n} ${x} ${y})"/>`).join("");
+  switch (tipo) {
+    case "girasol": return petalos(14, r * .22, r * .5, r * .55) + `<circle cx="${x}" cy="${y}" r="${r * .45}" fill="#5A3A22"/><circle cx="${x}" cy="${y}" r="${r * .25}" fill="none" stroke="#3E2716" stroke-width="${r * .08}"/>`;
+    case "pequena": return petalos(6, r * .32, r * .42, r * .45) + `<circle cx="${x}" cy="${y}" r="${r * .3}" fill="#5A3A22"/>`;
+    case "rosa": return `<circle cx="${x}" cy="${y}" r="${r * .85}" fill="${hex}"${borde}/>` +
+      `<path d="M${x - r * .5} ${y}a${r * .5} ${r * .5} 0 1 1 ${r * .5} ${r * .5}M${x - r * .25} ${y}a${r * .25} ${r * .25} 0 1 1 ${r * .25} ${r * .25}" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="${r * .1}" stroke-linecap="round"/>`;
+    case "lirio": return petalos(6, r * .26, r * .62, r * .5) + `<circle cx="${x}" cy="${y}" r="${r * .18}" fill="${hex.toUpperCase() === "#F6C21C" ? "#E07B00" : "#F6C21C"}"/>`;
+    case "tulipan": return `<path d="M${x - r * .6} ${y - r * .45}Q${x - r * .7} ${y + r * .6} ${x} ${y + r * .6}Q${x + r * .7} ${y + r * .6} ${x + r * .6} ${y - r * .45}L${x + r * .3} ${y - r * .1}L${x} ${y - r * .65}L${x - r * .3} ${y - r * .1}Z" fill="${hex}"${borde}/><path d="M${x} ${y - r * .65}L${x} ${y + r * .5}" stroke="rgba(0,0,0,.15)" stroke-width="${r * .08}"/>`;
+  }
+  return "";
+}
+/* Reparte los colores para que se vean mezclados */
+function floresMezcladas(cfg, max) {
+  const grupos = Object.entries(cfg.flores || {}).map(([k, n]) => { const [f, c] = k.split("|"); return { f, hex: crBuscar("colores", c)?.hex || "#ccc", n }; });
+  const out = [];
+  while (out.length < max && grupos.some(g => g.n > 0)) grupos.forEach(g => { if (g.n > 0 && out.length < max) { out.push(g); g.n--; } });
+  return out;
+}
+function svgCreacion(cfg) {
+  const verde = "#4E8B3A", verdeOsc = "#3A6B2B";
+  let s = "";
+  if (cfg.tipo === "ramo") {
+    const papel = crBuscar("papeles", cfg.papel)?.hex || "#F4F1EA", lazo = crBuscar("lazos", cfg.lazo)?.hex || "#A99BE6";
+    const P = [[120,96],[94,86],[146,86],[108,64],[132,64],[76,106],[164,106],[120,52],[66,80],[174,80],[96,112],[144,112],[120,122],[84,56],[156,56],[54,102],[186,102],[104,34],[136,34]];
+    const fl = floresMezcladas(cfg, P.length), n = fl.length, r = n <= 3 ? 27 : n <= 8 ? 22 : 18;
+    s += `<path d="M58 112L120 226L182 112Z" fill="${papel}" stroke="rgba(0,0,0,.12)"/>`;
+    s += [[70,70],[170,70],[60,110],[180,110],[120,40]].map(([a, b], i) => `<ellipse cx="${a}" cy="${b}" rx="10" ry="26" fill="${i % 2 ? verde : verdeOsc}" transform="rotate(${(a - 120) / 2} ${a} ${b})"/>`).join("");
+    s += fl.map((g, i) => ({ g, p: P[i] })).reverse().map(({ g, p }) => svgFlor(g.f, g.hex, p[0], p[1], r)).join("");
+    s += `<path d="M40 104L120 140L200 104L182 112L120 226L58 112Z" fill="${papel}" stroke="rgba(0,0,0,.15)"/><path d="M58 112L120 226" stroke="rgba(0,0,0,.1)"/><path d="M182 112L120 226" stroke="rgba(0,0,0,.1)"/>`;
+    s += `<path d="M120 176l-26-12v24zM120 176l26-12v24z" fill="${lazo}" stroke="rgba(0,0,0,.18)"/><path d="M120 176l-10 30M120 176l10 30" stroke="${lazo}" stroke-width="6" stroke-linecap="round"/><circle cx="120" cy="176" r="6" fill="${lazo}" stroke="rgba(0,0,0,.2)"/>`;
+  } else if (cfg.tipo === "maceta") {
+    const mac = crBuscar("macetas", cfg.maceta)?.hex || "#6B4A32";
+    const P = [[120,70],[86,96],[154,96],[102,46],[138,46]];
+    const fl = floresMezcladas(cfg, P.length);
+    s += fl.map((g, i) => `<path d="M120 165Q${(P[i][0] + 120) / 2} 130 ${P[i][0]} ${P[i][1]}" stroke="${verde}" stroke-width="5" fill="none"/>`).join("");
+    s += `<ellipse cx="96" cy="140" rx="9" ry="20" fill="${verdeOsc}" transform="rotate(-40 96 140)"/><ellipse cx="144" cy="140" rx="9" ry="20" fill="${verde}" transform="rotate(40 144 140)"/>`;
+    s += fl.map((g, i) => ({ g, p: P[i] })).reverse().map(({ g, p }) => svgFlor(g.f, g.hex, p[0], p[1], 24)).join("");
+    s += `<path d="M78 160H162L152 224H88Z" fill="${mac}" stroke="rgba(0,0,0,.18)"/>` + [92,104,116,128,140,152].map(x => `<path d="M${x} 162L${x + (x - 120) * -.08} 222" stroke="rgba(0,0,0,.15)" stroke-width="2"/>`).join("") + `<rect x="74" y="154" width="92" height="12" rx="4" fill="${mac}" stroke="rgba(0,0,0,.2)"/>`;
+  } else {
+    const lazo = crBuscar("lazos", cfg.lazo)?.hex || "#A99BE6", g = floresMezcladas(cfg, 1)[0];
+    s += `<path d="M120 226V90" stroke="${verde}" stroke-width="6"/><ellipse cx="102" cy="168" rx="10" ry="28" fill="${verdeOsc}" transform="rotate(-45 102 168)"/><ellipse cx="138" cy="150" rx="10" ry="28" fill="${verde}" transform="rotate(45 138 150)"/>`;
+    s += `<path d="M120 196l-18-9v18zM120 196l18-9v18z" fill="${lazo}" stroke="rgba(0,0,0,.18)"/><circle cx="120" cy="196" r="5" fill="${lazo}"/>`;
+    s += g ? svgFlor(g.f, g.hex, 120, 76, 40) : `<circle cx="120" cy="76" r="30" fill="none" stroke="#bbb" stroke-dasharray="6 6"/>`;
+  }
+  return `<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vista previa">${s}</svg>`;
+}
+const EJEMPLO_CREACION = { tipo:"ramo", papel:"lavanda", lazo:"blanco", flores:{ "girasol|amarillo":3, "rosa|rojo":3, "pequena|blanco":3, "tulipan|rosado":2 }, extras:{} };
+
+/* ---------- Estado e interfaz del creador ---------- */
+let cr = { tipo:"ramo", flor:"girasol", color:"amarillo", flores:{}, papel:"blanco", lazo:"lavanda", maceta:"cafe", extras:{} };
+
+const chip = (attr, item, activo, extra = "") =>
+  `<button class="cr-chip${item.hex ? " cr-chip-color" : ""}" role="radio" aria-checked="${activo}" data-${attr}="${item.id}">${item.hex ? `<i style="background:${item.hex}"></i>` : ""}${item.nombre}${extra}</button>`;
+
+function pintarCreador() {
+  if (!$("#crTipos")) return;
+  const t = crBuscar("tipos", cr.tipo), n = totalFlores(cr);
+  // 1. Tipo
+  $("#crTipos").innerHTML = CREADOR.tipos.map(x => `
+    <button class="cr-tipo" role="radio" aria-checked="${x.id === cr.tipo}" data-cr-tipo="${x.id}">
+      <span class="cr-tipo-arte" aria-hidden="true">${svgCreacion({ ...EJEMPLO_CREACION, tipo: x.id, maceta: "cafe", flores: x.id === "ramo" ? { "girasol|amarillo": 5 } : x.id === "maceta" ? { "girasol|amarillo": 3 } : { "lirio|azul": 1 } })}</span>
+      <strong>${x.nombre}</strong><small>${x.detalle}</small>
+      <small class="cr-desde">${x.precioBase ? `Base ${usd(x.precioBase)}` : "Sin costo base"}</small>
+    </button>`).join("");
+  // 2. Flores
+  $("#crFlorTipo").innerHTML = CREADOR.flores.map(f => chip("cr-flor", f, f.id === cr.flor, ` <small>${usd(f.precio)}</small>`)).join("");
+  $("#crFlorColor").innerHTML = CREADOR.colores.map(c => chip("cr-color", c, c.id === cr.color)).join("");
+  const fSel = crBuscar("flores", cr.flor), cSel = crBuscar("colores", cr.color);
+  const lleno = n >= t.maxFlores;
+  $("#crAnadir").disabled = lleno;
+  $("#crAnadir").innerHTML = `<span class="cr-muestra">${`<svg viewBox="0 0 60 60">${svgFlor(cr.flor, cSel.hex, 30, 30, 26)}</svg>`}</span> Agregar ${nombreFlor(cr.flor, cr.color)}`;
+  const claves = Object.keys(cr.flores);
+  $("#crLista").innerHTML = claves.length ? claves.map(k => {
+    const [f, c] = k.split("|"), fl = crBuscar("flores", f), co = crBuscar("colores", c), q = cr.flores[k];
+    return `<li class="cr-linea">
+      <span class="cr-muestra"><svg viewBox="0 0 60 60">${svgFlor(f, co.hex, 30, 30, 26)}</svg></span>
+      <span class="cr-linea-txt"><strong>${nombreFlor(f, c)}</strong><small>${usd(fl.precio)} c/u · ${usd(fl.precio * q)}</small></span>
+      <span class="cantidad">
+        <button data-cr-menos="${k}" aria-label="Quitar ${nombreFlor(f, c)}">−</button><span>${q}</span>
+        <button data-cr-mas="${k}" aria-label="Agregar ${nombreFlor(f, c)}" ${lleno ? "disabled" : ""}>+</button>
+      </span></li>`;
+  }).join("") : `<li class="cr-vacio">Aún no has agregado flores. Elige una flor y un color, y toca “Agregar”.</li>`;
+  $("#crContador").textContent = t.maxFlores === 1 ? `${n} de 1 flor` : `${n} de ${t.maxFlores} flores máximo`;
+  // 3. Presentación
+  let pres = "";
+  if (cr.tipo === "ramo") pres += `<span class="cr-sub">Papel</span><div class="cr-chips" role="radiogroup" aria-label="Papel">${CREADOR.papeles.map(x => chip("cr-papel", x, x.id === cr.papel)).join("")}</div>`;
+  if (cr.tipo === "maceta") pres += `<span class="cr-sub">Color de la maceta</span><div class="cr-chips" role="radiogroup" aria-label="Maceta">${CREADOR.macetas.map(x => chip("cr-maceta", x, x.id === cr.maceta)).join("")}</div>`;
+  if (cr.tipo !== "maceta") pres += `<span class="cr-sub">Lazo</span><div class="cr-chips" role="radiogroup" aria-label="Lazo">${CREADOR.lazos.map(x => chip("cr-lazo", x, x.id === cr.lazo)).join("")}</div>`;
+  $("#crPresentacion").innerHTML = pres;
+  // 4. Extras
+  $("#crExtras").innerHTML = EXTRAS.filter(e => CREADOR.extras.includes(e.id)).map(e => {
+    const q = cr.extras[e.id] || 0;
+    return `<li class="extra${q ? " activo" : ""}"><div class="extra-info"><strong>${e.nombre}</strong>${e.detalle ? `<small>${e.detalle}</small>` : ""}
+      <span class="extra-precio">+ ${usd(e.precio)}${tasa ? ` · ${bs(e.precio)}` : ""}</span></div>
+      <div class="cantidad"><button data-cr-extra-menos="${e.id}" aria-label="Quitar ${e.nombre}" ${q ? "" : "disabled"}>−</button><span>${q}</span>
+      <button data-cr-extra-mas="${e.id}" aria-label="Agregar ${e.nombre}" ${q >= e.max ? "disabled" : ""}>+</button></div></li>`;
+  }).join("");
+  pintarResumenCreador();
+}
+function pintarResumenCreador() {
+  const t = crBuscar("tipos", cr.tipo), n = totalFlores(cr), total = precioCreacion(cr), ext = costoExtras(cr.extras);
+  $("#crPreview").innerHTML = svgCreacion(cr);
+  $("#crTitulo").textContent = t.carrito;
+  const filas = [[`Base (${t.nombre.toLowerCase()})`, t.precioBase], [`Flores (${n})`, costoFlores(cr)]];
+  if (ext) filas.push(["Extras", ext]);
+  $("#crDesglose").innerHTML = filas.map(([a, b]) => `<div><span>${a}</span><span>${usd(b)}</span></div>`).join("");
+  $("#crTotal").innerHTML = precioHTML(total);
+  const { abono } = dividirPago(total);
+  $("#crAbono").innerHTML = n && PORCENTAJE_ABONO < 100 ? `Abonas hoy <strong>${usd(abono)}</strong>${tasa ? ` (${bs(abono)})` : ""} y el resto al recibir.` : "";
+  let msg = "";
+  if (n < t.minFlores) msg = t.minFlores === 1 ? "Agrega una flor para continuar." : `Agrega al menos ${t.minFlores} flores (llevas ${n}).`;
+  else if (n > t.maxFlores) msg = t.maxFlores === 1 ? `Para “${t.nombre}” elige solo 1 flor (llevas ${n}). Quita las demás.` : `Para “${t.nombre}” el máximo es ${t.maxFlores} flores (llevas ${n}).`;
+  $("#crMensaje").textContent = msg;
+  $("#crAgregar").disabled = !!msg;
+  // Barra fija en celular
+  $("#crBarraMini").innerHTML = svgCreacion(cr);
+  $("#crBarraFlores").textContent = `${n} ${n === 1 ? "flor" : "flores"}${tasa ? " · " + bs(total) : ""}`;
+  $("#crBarraTotal").textContent = usd(total);
+}
+$("#crBarraVer")?.addEventListener("click", () => {
+  document.querySelector(".creador-resumen").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+/* La barra aparece mientras se recorren los pasos y se oculta al llegar al resumen */
+if ("IntersectionObserver" in window && $("#crBarra")) {
+  let enPasos = false, enResumen = false;
+  const actualizarBarra = () => {
+    const ver = enPasos && !enResumen;
+    $("#crBarra").classList.toggle("visible", ver);
+    $("#crBarra").setAttribute("aria-hidden", !ver);
+    $("#crBarraVer").tabIndex = ver ? 0 : -1;
+    document.body.classList.toggle("con-barra-creador", ver);
+  };
+  new IntersectionObserver(e => { enPasos = e[0].isIntersecting; actualizarBarra(); }).observe(document.querySelector(".creador-pasos"));
+  new IntersectionObserver(e => { enResumen = e[0].isIntersecting; actualizarBarra(); }, { threshold: .25 }).observe(document.querySelector(".creador-resumen"));
+}
+/* Mantener el foco en el mismo botón después de redibujar */
+function conFoco(fn) {
+  const a = document.activeElement, attr = a && [...a.attributes].find(x => x.name.startsWith("data-cr"));
+  fn();
+  if (attr) { const b = document.querySelector(`[${attr.name}="${attr.value}"]`); if (b && !b.disabled) b.focus({ preventScroll: true }); else if (b) $("#crAnadir")?.focus({ preventScroll: true }); }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("#crea-tu-ramo button"); if (!b || b.disabled) return;
+  const d = b.dataset, t = crBuscar("tipos", cr.tipo);
+  conFoco(() => {
+    if (d.crTipo) cr.tipo = d.crTipo;
+    else if (d.crFlor) cr.flor = d.crFlor;
+    else if (d.crColor) cr.color = d.crColor;
+    else if (b.id === "crAnadir") { const k = cr.flor + "|" + cr.color; if (totalFlores(cr) < t.maxFlores) cr.flores[k] = (cr.flores[k] || 0) + 1; }
+    else if (d.crMas) { if (totalFlores(cr) < t.maxFlores) cr.flores[d.crMas]++; }
+    else if (d.crMenos) { if (--cr.flores[d.crMenos] <= 0) delete cr.flores[d.crMenos]; }
+    else if (d.crPapel) cr.papel = d.crPapel;
+    else if (d.crLazo) cr.lazo = d.crLazo;
+    else if (d.crMaceta) cr.maceta = d.crMaceta;
+    else if (d.crExtraMas) { const ex = EXTRAS.find(x => x.id === d.crExtraMas); cr.extras[ex.id] = Math.min((cr.extras[ex.id] || 0) + 1, ex.max); }
+    else if (d.crExtraMenos) { if (--cr.extras[d.crExtraMenos] <= 0) delete cr.extras[d.crExtraMenos]; }
+    else if (b.id === "crAgregar") return agregarCreacion();
+    else if (b.id === "crReiniciar") { cr = { ...cr, flores: {}, extras: {} }; $("#crIdea").value = ""; }
+    else return;
+    pintarCreador();
+  });
+});
+function agregarCreacion() {
+  if (!creacionValida(cr)) return pintarResumenCreador();
+  const c = { tipo: cr.tipo, flores: { ...cr.flores }, extras: { ...cr.extras }, idea: $("#crIdea").value.trim().slice(0, 300) };
+  if (cr.tipo === "ramo") { c.papel = cr.papel; c.lazo = cr.lazo; }
+  if (cr.tipo === "maceta") c.maceta = cr.maceta;
+  if (cr.tipo === "suelta") c.lazo = cr.lazo;
+  carrito.push({ clave: "cr-" + Date.now(), creacion: c, cantidad: 1 });
+  guardar(); pintarCarrito();
+  aviso("¡Tu creación se agregó al carrito!");
+  $("#crVerCarrito").hidden = false;
+}
+$("#crVerCarrito")?.addEventListener("click", abrirCarrito);
+
 /* Enviar pedido por WhatsApp */
 $("#enviarPedido").addEventListener("click", () => {
   let total = 0;
   const lineas = carrito.map(x => {
-    const p = PRODUCTOS.find(q => q.id === x.id), o = p.opciones[x.opcion];
-    const sub = precioUnidad(x) * x.cantidad, ext = textoExtras(x.extras);
+    const i = infoItem(x), sub = precioUnidad(x) * x.cantidad;
     total += sub;
-    return `• ${x.cantidad} x ${p.nombre} (${o.nombre}) – ${precioTexto(sub)}` +
-      (ext ? `\n   Extras por unidad: ${ext} (+ ${usd(costoExtras(x.extras))})` : "");
+    if (x.creacion) return `• ${x.cantidad} x ${i.nombre} – ${precioTexto(sub)}` +
+      `\n   Flores: ${i.detalle}\n   Presentación: ${i.detalle2}` +
+      (i.ext ? `\n   Extras por unidad: ${i.ext} (+ ${usd(i.costoExt)})` : "") +
+      (i.idea ? `\n   Idea: ${i.idea}` : "");
+    return `• ${x.cantidad} x ${i.nombre} (${i.detalle}) – ${precioTexto(sub)}` +
+      (i.ext ? `\n   Extras por unidad: ${i.ext} (+ ${usd(i.costoExt)})` : "");
   });
   const tarjeta = $("#mensajeTarjeta").value.trim();
   const mensaje = `Hola Amara, quiero hacer este pedido:\n\n${lineas.join("\n")}\n\nTotal: ${precioTexto(total)}` +
@@ -442,6 +854,9 @@ $("#enviarPedido").addEventListener("click", () => {
         `\n• Restante el día de la entrega (${100 - PORCENTAJE_ABONO}%): ${precioTexto(dividirPago(total).resto)}`
       : "") +
     (tarjeta ? `\n\nMensaje para la tarjeta: "${tarjeta}"` : "") +
+    (metodoActual() ? `\n\nMétodo de pago: ${metodoActual().nombre}` +
+      `\nMonto del abono: ${montoMetodo(metodoActual(), PORCENTAJE_ABONO < 100 ? dividirPago(total).abono : total)}` +
+      `\n(Adjunto la captura del pago)` : "") +
     `\n\nMi nombre:\nDirección de entrega:\nFecha de entrega:`;
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`, "_blank");
 });
@@ -505,4 +920,6 @@ sistemaOscuro.addEventListener("change", () => { if (temaActual() === "auto") ap
 aplicarTema(temaActual());
 
 $("#anio").textContent = new Date().getFullYear();
+pintarMetodosContacto();
+pintarCreador();
 pintarProductos(); pintarCarrito(); cargarTasa();

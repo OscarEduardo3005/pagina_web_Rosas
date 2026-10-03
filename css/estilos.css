@@ -384,3 +384,175 @@ button{font:inherit;cursor:pointer}
 /* Resumen del abono en el pie (solo en celular; en PC se ve el recuadro completo) */
 .abono-corto{display:none;width:100%;order:4;margin:0;font-size:.82rem;color:var(--texto);background:color-mix(in srgb,var(--amarillo) 22%,transparent);border-radius:8px;padding:6px 10px}
 @media (max-width:700px){.abono-corto{display:block}}
+
+/* =========================================================
+   16. MÉTODOS DE PAGO
+   ========================================================= */
+/* El carrito completo se desplaza; el botón de enviar queda fijo abajo */
+.carrito{overflow-y:auto;overscroll-behavior:contain}
+.carrito-lista{flex:1 0 auto;overflow:visible}
+.carrito-cab{position:sticky;top:0;background:var(--fondo);z-index:2}
+.carrito-enviar{position:sticky;bottom:0;background:var(--fondo);margin:0 -20px -20px;padding:12px 20px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--borde)}
+
+.metodos-carrito{border:1px solid var(--borde);border-radius:14px;padding:14px;margin-bottom:16px;background:var(--superficie)}
+.metodos-titulo{display:block;font-weight:800;font-size:.95rem;margin-bottom:8px}
+.metodo-unico{display:inline-block;background:var(--fondo-alt);color:var(--principal);border-radius:999px;padding:4px 12px;font-size:.9rem;margin-bottom:10px}
+.metodos-opciones{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.metodos-opciones button{border:2px solid var(--borde);background:var(--superficie);color:var(--texto);border-radius:999px;padding:6px 14px;font-weight:700;font-size:.88rem}
+.metodos-opciones button[aria-checked="true"]{border-color:var(--principal);background:var(--principal);color:var(--sobre-principal)}
+
+.datos-pago{margin:0;display:flex;flex-direction:column;gap:6px}
+.datos-pago > div{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:8px;background:var(--fondo);border-radius:10px;padding:6px 6px 6px 10px}
+.datos-pago dt{font-size:.8rem;color:var(--texto-suave);font-weight:600}
+.datos-pago dd{margin:0;font-weight:800;font-size:.92rem;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.btn-copiar{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--borde);background:var(--superficie);color:var(--principal);border-radius:999px;padding:5px 10px;font-size:.78rem;font-weight:700;white-space:nowrap}
+.btn-copiar svg{width:14px;height:14px}
+.btn-copiar:hover{border-color:var(--principal)}
+.btn-copiar.copiado{background:var(--principal);color:var(--sobre-principal);border-color:var(--principal)}
+
+.monto-pagar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;background:color-mix(in srgb,var(--amarillo) 20%,var(--superficie));border-radius:10px;padding:8px 8px 8px 12px}
+.monto-pagar > span{display:flex;flex-direction:column;font-size:.8rem;color:var(--texto-suave);font-weight:600}
+.monto-pagar strong{font-size:1.1rem;color:var(--texto)}
+.metodos-nota{font-size:.8rem;color:var(--texto-suave);margin:10px 0 0}
+
+/* En la sección de contacto */
+#metodosContacto{display:flex;flex-direction:column;gap:12px;margin-top:6px;max-width:420px}
+.metodo-contacto > strong{display:block;font-family:var(--fuente-texto);font-size:.95rem;margin-bottom:6px;color:var(--principal)}
+.contacto .datos-pago > div{background:var(--superficie)}
+/* Con el carrito abierto, el aviso flotante sube para no tapar el botón */
+.carrito.abierto ~ .toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+/* Pantallas muy angostas: el botón de copiar muestra solo el ícono */
+@media (max-width:360px){
+  .datos-pago .btn-copiar{padding:6px 8px}
+  .datos-pago .btn-copiar span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+}
+@media (max-width:360px){
+  .datos-pago > div{grid-template-columns:1fr auto;row-gap:0}
+  .datos-pago dt{grid-column:1;grid-row:1}
+  .datos-pago dd{grid-column:1;grid-row:2}
+  .datos-pago .btn-copiar{grid-column:2;grid-row:1 / span 2}
+}
+
+/* Botón "Copiar todos los datos" */
+.btn-copiar-todo{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;border:2px solid var(--principal);background:transparent;color:var(--principal);border-radius:999px;padding:10px 16px;font-weight:800;font-size:.9rem}
+.btn-copiar-todo svg{width:16px;height:16px;flex:none}
+.btn-copiar-todo:hover{background:var(--fondo-alt)}
+.btn-copiar-todo.copiado{background:var(--principal);color:var(--sobre-principal)}
+/* En celular, los botones de copiar individuales muestran solo el ícono
+   (está el botón grande "Copiar todos los datos" debajo) */
+@media (max-width:480px){
+  .datos-pago .btn-copiar{padding:6px 8px}
+  .datos-pago .btn-copiar span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .datos-pago .btn-copiar.copiado svg{animation:none}
+}
+
+/* =========================================================
+   17. CREA TU RAMO
+   ========================================================= */
+/* Tarjeta de invitación en la grilla */
+.cta-creador{background:linear-gradient(160deg,var(--principal),color-mix(in srgb,var(--principal) 60%,var(--oscuro)));color:var(--sobre-principal)}
+.cta-creador-enlace{display:flex;flex-direction:column;height:100%;text-decoration:none;color:inherit}
+.cta-creador-arte{display:block;aspect-ratio:4/3;background:color-mix(in srgb,var(--blanco) 85%,var(--principal));padding:12px}
+.cta-creador-arte svg{width:100%;height:100%}
+.cta-creador-texto{display:flex;flex-direction:column;gap:6px;padding:18px 20px 22px;flex:1}
+.cta-creador .nota-mano{color:var(--amarillo-suave);font-size:1.4rem}
+.cta-creador strong{font-family:var(--fuente-titulos);font-weight:400;font-size:1.5rem;line-height:1.15}
+.cta-creador-texto > span:not(.nota-mano):not(.btn){font-size:.95rem;opacity:.9;flex:1}
+.cta-creador .btn{align-self:flex-start;background:var(--amarillo);color:var(--sobre-amarillo);padding:10px 20px;margin-top:6px}
+.cta-creador-enlace:hover .btn{background:var(--amarillo-suave)}
+
+/* Sección del creador */
+.creador{margin-top:72px;padding-top:56px;border-top:1px solid var(--borde);scroll-margin-top:80px}
+.creador-cab .intro{margin-bottom:28px}
+.creador-cuerpo{display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start}
+.creador-pasos{display:flex;flex-direction:column;gap:20px;min-width:0}
+.cr-paso{border:1px solid var(--borde);border-radius:var(--radio);background:var(--superficie);padding:20px;margin:0;min-width:0}
+.cr-paso legend{display:flex;align-items:center;gap:10px;font-family:var(--fuente-titulos);font-size:1.3rem;padding:0 6px;float:left;width:100%;margin-bottom:14px}
+.cr-paso legend small{font-family:var(--fuente-texto);font-size:.85rem;color:var(--texto-suave);margin-left:auto}
+.cr-paso legend + *{clear:both}
+.cr-num{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--amarillo);color:var(--sobre-amarillo);font-family:var(--fuente-texto);font-weight:800;font-size:.95rem;flex:none}
+.cr-sub{display:block;font-weight:800;font-size:.9rem;margin:12px 0 8px;clear:both}
+
+.cr-tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;clear:both}
+.cr-tipo{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;border:2px solid var(--borde);background:var(--fondo);color:var(--texto);border-radius:16px;padding:12px 10px}
+.cr-tipo[aria-checked="true"]{border-color:var(--principal);box-shadow:0 0 0 3px color-mix(in srgb,var(--principal) 20%,transparent)}
+.cr-tipo-arte{width:84px;height:84px}
+.cr-tipo-arte svg{width:100%;height:100%}
+.cr-tipo strong{font-size:1rem}
+.cr-tipo small{font-size:.8rem;color:var(--texto-suave);line-height:1.3}
+.cr-tipo .cr-desde{color:var(--principal);font-weight:700;margin-top:4px}
+
+.cr-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cr-chip{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--borde);background:var(--fondo);color:var(--texto);border-radius:999px;padding:7px 14px;font-weight:700;font-size:.9rem}
+.cr-chip small{color:var(--texto-suave);font-weight:600}
+.cr-chip i{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.2);flex:none}
+.cr-chip[aria-checked="true"]{border-color:var(--principal);background:color-mix(in srgb,var(--principal) 12%,var(--fondo));color:var(--principal)}
+.cr-anadir{margin-top:16px;padding:10px 20px 10px 10px}
+.cr-anadir:disabled{opacity:.45;cursor:not-allowed}
+.cr-muestra{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--fondo);flex:none}
+.cr-muestra svg{width:32px;height:32px}
+.cr-anadir .cr-muestra{background:var(--blanco)}
+
+.cr-lista{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.cr-linea{display:flex;align-items:center;gap:12px;border:1px solid var(--borde);border-radius:12px;padding:8px 12px;background:var(--fondo)}
+.cr-linea-txt{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.3}
+.cr-linea-txt small{color:var(--texto-suave);font-size:.82rem}
+.cr-linea .cantidad{margin:0}
+.cr-vacio{color:var(--texto-suave);font-size:.92rem;padding:12px;border:1px dashed var(--borde);border-radius:12px;text-align:center}
+#crPresentacion .cr-sub:first-child{margin-top:0}
+.cr-paso textarea{width:100%;min-height:90px;border:1px solid var(--borde);border-radius:12px;padding:12px;font:inherit;font-size:.95rem;color:var(--texto);background:var(--fondo);resize:vertical;clear:both}
+
+/* Resumen */
+.creador-resumen{position:sticky;top:96px;background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 12px 30px var(--sombra)}
+.cr-preview{aspect-ratio:1;background:radial-gradient(circle at 50% 40%,var(--fondo-alt),var(--fondo));border-radius:16px;padding:8px}
+.cr-preview svg{width:100%;height:100%}
+.creador-resumen h3{font-size:1.35rem;margin:6px 0 0}
+.cr-desglose{font-size:.9rem;color:var(--texto-suave)}
+.cr-desglose div{display:flex;justify-content:space-between;padding:3px 0}
+.cr-total{display:flex;justify-content:space-between;align-items:flex-start;border-top:1px solid var(--borde);padding-top:10px;font-weight:800}
+.cr-total .precio{text-align:right;font-size:1.3rem}
+.cr-abono{font-size:.85rem;margin:0;background:color-mix(in srgb,var(--amarillo) 20%,transparent);border-radius:8px;padding:8px 10px}
+.cr-abono:empty,.cr-mensaje:empty{display:none}
+.cr-mensaje{margin:0;font-size:.88rem;font-weight:700;color:var(--principal)}
+.creador-resumen .btn{justify-content:center}
+#crAgregar:disabled{opacity:.45;cursor:not-allowed}
+.cr-reiniciar{background:none;border:0;color:var(--texto-suave);text-decoration:underline;font-size:.88rem;padding:4px}
+.cr-nota{font-size:.78rem;color:var(--texto-suave);margin:0;text-align:center}
+
+/* Carrito: miniatura de la creación */
+.item-svg{display:block;width:100%;height:100%;background:var(--fondo-alt);padding:4px}
+.item-svg svg{width:100%;height:100%}
+.item-idea{display:block;font-style:italic;font-size:.8rem;line-height:1.3}
+
+@media (max-width:960px){
+  .creador-cuerpo{grid-template-columns:1fr}
+  .creador-resumen{position:static;order:2}
+  .cr-preview{max-width:280px;width:100%;margin:0 auto}
+}
+@media (max-width:560px){
+  .cr-tipos{grid-template-columns:1fr}
+  .cr-tipo{display:grid;grid-template-columns:56px 1fr;column-gap:12px;row-gap:0;text-align:left;align-items:center;padding:10px 12px}
+  .cr-tipo-arte{width:56px;height:56px;grid-row:1 / span 3}
+  .cr-tipo .cr-desde{margin-top:2px}
+  .cr-paso{padding:16px}
+  .cr-paso legend{font-size:1.15rem;flex-wrap:wrap}
+  .cr-paso legend small{margin-left:42px;width:100%}
+}
+
+/* Cualquier elemento con el atributo hidden queda oculto */
+[hidden]{display:none!important}
+
+/* Barra fija del creador (solo celular y tablet) */
+.cr-barra{display:none}
+@media (max-width:960px){
+  .cr-barra{display:flex;align-items:center;gap:12px;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;background:var(--superficie);border:1px solid var(--borde);border-radius:18px;padding:8px 8px 8px 10px;box-shadow:0 12px 30px var(--sombra);transform:translateY(160%);transition:transform .3s}
+  .cr-barra.visible{transform:none}
+  .cr-barra-mini{width:48px;height:48px;border-radius:12px;background:var(--fondo-alt);flex:none;padding:2px}
+  .cr-barra-mini svg{width:100%;height:100%}
+  .cr-barra-txt{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.25}
+  .cr-barra-txt small{color:var(--texto-suave);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cr-barra-txt strong{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cr-barra .btn{padding:10px 14px;font-size:.88rem;white-space:nowrap}
+  .con-barra-creador .whatsapp-flotante{transform:translateY(-84px);transition:transform .3s}
+}
+.whatsapp-flotante{transition:transform .3s}

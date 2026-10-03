@@ -39,6 +39,7 @@
     <nav aria-label="Principal">
       <ul class="menu" id="menu">
         <li><a href="#productos">Productos</a></li>
+        <li><a href="#crea-tu-ramo">Crea tu ramo</a></li>
         <li><a href="#como-pedir">Cómo pedir</a></li>
         <li><a href="#nosotros">Nosotros</a></li>
         <li><a href="#contacto">Contacto</a></li>
@@ -117,6 +118,70 @@
     <div class="filtros" id="filtros" role="group" aria-label="Filtrar por categoría"></div>
     <input type="search" class="buscador" id="buscador" placeholder="Buscar: girasol, ramo, lirio…" aria-label="Buscar un producto">
     <div class="grilla" id="grilla"></div>
+
+    <!-- ===================== CREA TU RAMO =====================
+         Las flores, colores, precios y presentaciones se editan
+         en js/script.js, en la sección CREADOR. -->
+    <div class="creador" id="crea-tu-ramo">
+      <div class="creador-cab">
+        <span class="nota-mano">Hecho a tu gusto</span>
+        <h2>Crea tu ramo</h2>
+        <p class="intro">Arma tu detalle paso a paso. A la derecha verás cómo va quedando y cuánto cuesta.</p>
+      </div>
+
+      <div class="creador-cuerpo">
+        <div class="creador-pasos">
+          <fieldset class="cr-paso">
+            <legend><span class="cr-num">1</span> ¿Qué quieres crear?</legend>
+            <div class="cr-tipos" id="crTipos" role="radiogroup" aria-label="Tipo de creación"></div>
+          </fieldset>
+
+          <fieldset class="cr-paso">
+            <legend><span class="cr-num">2</span> Elige tus flores <small id="crContador"></small></legend>
+            <span class="cr-sub">Flor</span>
+            <div class="cr-chips" id="crFlorTipo" role="radiogroup" aria-label="Tipo de flor"></div>
+            <span class="cr-sub">Color</span>
+            <div class="cr-chips" id="crFlorColor" role="radiogroup" aria-label="Color de la flor"></div>
+            <button class="btn btn-principal cr-anadir" id="crAnadir"></button>
+            <ul class="cr-lista" id="crLista" aria-live="polite"></ul>
+          </fieldset>
+
+          <fieldset class="cr-paso">
+            <legend><span class="cr-num">3</span> Presentación</legend>
+            <div id="crPresentacion"></div>
+          </fieldset>
+
+          <fieldset class="cr-paso">
+            <legend><span class="cr-num">4</span> Extras <small>(opcional)</small></legend>
+            <ul class="lista-extras" id="crExtras"></ul>
+          </fieldset>
+
+          <fieldset class="cr-paso">
+            <legend><span class="cr-num">5</span> Cuéntanos tu idea <small>(opcional)</small></legend>
+            <textarea id="crIdea" maxlength="300" placeholder="Ej.: Quiero que los girasoles vayan al centro y las rosas alrededor. Si tienes una foto de referencia, envíala por WhatsApp."></textarea>
+          </fieldset>
+        </div>
+
+        <aside class="creador-resumen" aria-label="Resumen de tu creación">
+          <div class="cr-preview" id="crPreview"></div>
+          <h3 id="crTitulo"></h3>
+          <div class="cr-desglose" id="crDesglose"></div>
+          <div class="cr-total"><span>Total</span><span class="precio" id="crTotal"></span></div>
+          <p class="cr-abono" id="crAbono"></p>
+          <p class="cr-mensaje" id="crMensaje" role="status"></p>
+          <button class="btn btn-principal" id="crAgregar">Agregar al carrito</button>
+          <button class="btn btn-borde" id="crVerCarrito" hidden>Ver carrito</button>
+          <button class="cr-reiniciar" id="crReiniciar">Empezar de nuevo</button>
+          <p class="cr-nota">La vista previa es una guía. Cada pieza se hace a mano y puede variar un poco.</p>
+        </aside>
+        <!-- Barra fija en celular: miniatura, total y acceso al resumen -->
+        <div class="cr-barra" id="crBarra" aria-hidden="true">
+          <span class="cr-barra-mini" id="crBarraMini"></span>
+          <span class="cr-barra-txt"><small id="crBarraFlores"></small><strong id="crBarraTotal"></strong></span>
+          <button class="btn btn-principal" id="crBarraVer" tabindex="-1">Ver resumen</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -204,6 +269,7 @@
       <div class="dato"><strong>Horario de atención</strong>Lunes a sábado, 9:00 a. m. a 7:00 p. m.</div>
       <div class="dato"><strong>Entregas</strong>Domicilios en tu ciudad. Envíos nacionales bajo pedido.</div>
       <div class="dato"><strong>Correo</strong><a href="mailto:hola@amara.com">hola@amara.com</a></div>
+      <div class="dato"><strong>Métodos de pago</strong><div id="metodosContacto"></div></div>
     </div>
     <div class="mapa">
       <!-- MAPA: en Google Maps busca tu local, toca Compartir > Insertar un mapa y pega aquí el <iframe> -->
@@ -243,7 +309,11 @@
       <div><span>Abono hoy (<span class="pct-abono">50</span>%)</span><span id="abonoCarrito"></span></div>
       <div><span>Al recibir tu pedido</span><span id="restoCarrito"></span></div>
     </div>
-    <button class="btn btn-principal" id="enviarPedido">Enviar pedido por WhatsApp</button>
+    <!-- MÉTODOS DE PAGO: se editan en js/script.js (METODOS_PAGO) -->
+    <div class="metodos-carrito" id="metodosCarrito" hidden></div>
+    <div class="carrito-enviar">
+      <button class="btn btn-principal" id="enviarPedido">Enviar pedido por WhatsApp</button>
+    </div>
   </div>
 </aside>
 
