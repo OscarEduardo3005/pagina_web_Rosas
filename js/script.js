@@ -35,6 +35,8 @@ const PORCENTAJE_ABONO = 50;
    mensaje de WhatsApp.
    moneda: "Bs" muestra el monto a pagar en bolívares;
            "USD" lo muestra en dólares (para Zelle, efectivo…).
+   nota:   texto que ve el cliente en el carrito con ese método.
+   notaWhatsApp: frase que se agrega al mensaje del pedido.
    datos:  etiqueta y valor que ve el cliente. "copiar" es lo
            que se copia al tocar el botón (sin puntos ni
            paréntesis, para pegarlo directo en el banco).
@@ -52,6 +54,16 @@ const METODOS_PAGO = [
       { etiqueta: "C.I.",     valor: "31.754.872",       copiar: "31754872" },
       { etiqueta: "Teléfono", valor: "(0412) 573.54.90", copiar: "04125735490" },
     ],
+    nota: "Después de pagar, envía el pedido y adjunta la captura del pago en WhatsApp.",
+    notaWhatsApp: "(Adjunto la captura del pago)",
+  },
+  {
+    id: "divisas",
+    nombre: "Divisas $",
+    moneda: "USD",
+    datos: [],   // sin datos: se paga en efectivo, en dólares
+    nota: "Pagas en efectivo, en dólares. Envía el pedido y coordinamos por WhatsApp cómo entregar el abono.",
+    notaWhatsApp: "(Pagaré en divisas)",
   },
   // Ejemplo para más adelante:
   // {
@@ -109,6 +121,13 @@ const PRODUCTOS = [
     etiqueta:"Nuevo",
     opciones:[{nombre:"1 lirio",precio:5},{nombre:"3 lirios",precio:14}] },
 
+  { id:7, nombre:"Caja de lirios azules con luz", categoria:"Ramos",
+    imagenes:["img/caja-lirios-azules-1.jpg","img/caja-lirios-azules-2.jpg","img/caja-lirios-azules-3.jpg","img/caja-lirios-azules-4.jpg"],
+    descripcion:"Lirios azules y blanco tejidos a mano, en caja negra con asa de cinta y luces LED que los iluminan de noche.",
+    etiqueta:"Nuevo",
+    extras:["hotwheels","flor","mariposa","lazo","tarjeta","chocolates","peluche"], // ya incluye caja y luces
+    opciones:[{nombre:"3 lirios",precio:25},{nombre:"5 lirios",precio:38}] },
+
   { id:6, nombre:"Combo ramo y girasol", categoria:"Combos",
     imagenes:["img/promo-flores-amarillas.jpg","img/ramo-flores-luz.jpg","img/girasol-bolsa-regalo.jpg"],
     descripcion:"Ramo de flores amarillas con luz cálida más un girasol en maceta dentro de su bolsa de regalo.",
@@ -121,6 +140,8 @@ const PRODUCTOS = [
    producto con el botón "Extras". Precios EN DÓLARES (cada
    unidad); el monto en bolívares se calcula solo.
    max: cuántas unidades de ese extra se pueden agregar.
+   exclusivo:true → ese extra NO aparece en todos los productos,
+   solo en los que lo nombren en su lista extras:[...].
    Para que un producto muestre solo algunos extras, agrégale
    extras:["flor","luces"] en la lista PRODUCTOS. Si no lo
    tiene, muestra todos.
@@ -135,6 +156,8 @@ const EXTRAS = [
   { id:"chocolates", nombre:"Chocolates",            detalle:"Cajita de bombones",                 precio:4,   max:3 },
   { id:"peluche",    nombre:"Peluche pequeño",       detalle:"Osito de unos 15 cm",                precio:6,   max:2 },
   { id:"bolsa",      nombre:"Bolsa de regalo",       detalle:"Bolsa blanca con ventana",           precio:2,   max:2 },
+  // exclusivo:true → solo aparece en los productos que lo incluyan en su lista extras:[...]
+  { id:"hotwheels",  nombre:"Carrito Hot Wheels",    detalle:"Carrito de colección en su empaque", precio:4,   max:5, exclusivo:true },
 ];
 
 /* =========================================================
@@ -173,11 +196,14 @@ const CREADOR = {
   ],
   papeles: [
     { id:"blanco",   nombre:"Blanco",   hex:"#F4F1EA" },
-    { id:"kraft",    nombre:"Kraft",    hex:"#C9A27A" },
+    { id:"kraft",    nombre:"Marrón",   hex:"#C9A27A" },
     { id:"negro",    nombre:"Negro",    hex:"#2B2730" },
     { id:"rosado",   nombre:"Rosado",   hex:"#F6C9D6" },
     { id:"lavanda",  nombre:"Lavanda",  hex:"#CFC3F2" },
   ],
+  // elegirLazo: false → el cliente NO elige color de lazo (se usa el lavanda).
+  // Cámbialo a true para volver a mostrar los colores de lazo.
+  elegirLazo: false,
   lazos: [
     { id:"lavanda",  nombre:"Lavanda",  hex:"#A99BE6" },
     { id:"blanco",   nombre:"Blanco",   hex:"#FFFFFF" },
@@ -367,7 +393,8 @@ document.addEventListener("click", e => {
 let actual = null, opcionSel = 0, ultimoFoco = null, extrasSel = {};
 
 /* Extras disponibles para un producto */
-const extrasDe = p => p.extras ? EXTRAS.filter(e => p.extras.includes(e.id)) : EXTRAS;
+/* Si el producto tiene su lista extras:[...], se muestran en ese mismo orden */
+const extrasDe = p => p.extras ? p.extras.map(id => EXTRAS.find(e => e.id === id)).filter(Boolean) : EXTRAS.filter(e => !e.exclusivo);
 /* Costo de un conjunto de extras { id: cantidad } */
 const costoExtras = sel => Object.entries(sel || {}).reduce((s, [id, n]) => {
   const e = EXTRAS.find(x => x.id === id); return s + (e ? e.precio * n : 0);
@@ -556,7 +583,7 @@ const montoMetodo = (m, n) => m.moneda === "Bs" && tasa ? bs(n) : usd(n);
 const montoCopiar = (m, n) => (m.moneda === "Bs" && tasa ? n * tasa : n).toFixed(2).replace(".", ",");
 const ICONO_COPIAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
 
-const datosHTML = m => `<dl class="datos-pago">${m.datos.map(d => `
+const datosHTML = m => !m.datos.length ? "" : `<dl class="datos-pago">${m.datos.map(d => `
   <div><dt>${d.etiqueta}</dt><dd>${d.valor}</dd>
     <button class="btn-copiar" data-copiar="${d.copiar ?? d.valor}" aria-label="Copiar ${d.etiqueta}">${ICONO_COPIAR}<span>Copiar</span></button></div>`).join("")}</dl>`;
 
@@ -565,7 +592,7 @@ const textoCopiarTodo = (m, monto) =>
   [m.nombre, ...m.datos.map(d => `${d.etiqueta}: ${d.copiar ?? d.valor}`)]
     .concat(monto !== undefined ? [`Monto: ${montoCopiar(m, monto)}`] : [])
     .join("\n");
-const botonCopiarTodo = (m, monto) => `
+const botonCopiarTodo = (m, monto) => !m.datos.length ? "" : `
   <button class="btn-copiar-todo" data-copiar="${textoCopiarTodo(m, monto).replace(/"/g, "&quot;")}">
     ${ICONO_COPIAR}<span>${monto !== undefined ? "Copiar todo con el monto" : "Copiar todos los datos"}</span>
   </button>`;
@@ -583,14 +610,14 @@ function pintarMetodos(abono) {
     ${datosHTML(m)}
     <div class="monto-pagar">
       <span>Monto del abono${PORCENTAJE_ABONO >= 100 ? "" : ` (${PORCENTAJE_ABONO}%)`}<strong>${montoMetodo(m, abono)}</strong></span>
-      <button class="btn-copiar" data-copiar="${montoCopiar(m, abono)}" aria-label="Copiar monto">${ICONO_COPIAR}<span>Copiar</span></button>
+      ${m.datos.length ? `<button class="btn-copiar" data-copiar="${montoCopiar(m, abono)}" aria-label="Copiar monto">${ICONO_COPIAR}<span>Copiar</span></button>` : ""}
     </div>
     ${botonCopiarTodo(m, abono)}
-    <p class="metodos-nota">Después de pagar, envía el pedido y adjunta la captura del pago en WhatsApp.</p>`;
+    ${m.nota ? `<p class="metodos-nota">${m.nota}</p>` : ""}`;
 }
 function pintarMetodosContacto() {
   const c = $("#metodosContacto"); if (!c) return;
-  c.innerHTML = METODOS_PAGO.map(m => `<div class="metodo-contacto"><strong>${m.nombre}</strong>${datosHTML(m)}${botonCopiarTodo(m)}</div>`).join("");
+  c.innerHTML = `<ul class="metodos-lista">${METODOS_PAGO.map(m => `<li>${m.nombre}</li>`).join("")}</ul>`;
   c.closest(".dato").hidden = !METODOS_PAGO.length;
 }
 $("#metodosCarrito").addEventListener("click", e => {
@@ -648,9 +675,10 @@ function describirCreacion(cfg) {
     const [f, c] = k.split("|"); return `${n} ${nombreFlor(f, c, n).toLowerCase()}`;
   }).join(", ");
   const partes = [];
-  if (cfg.tipo === "ramo") partes.push(`Papel ${crBuscar("papeles", cfg.papel)?.nombre.toLowerCase()}`, `lazo ${crBuscar("lazos", cfg.lazo)?.nombre.toLowerCase()}`);
+  if (cfg.tipo === "ramo") partes.push(`Papel ${crBuscar("papeles", cfg.papel)?.nombre.toLowerCase()}`);
+  if (cfg.lazo && cfg.tipo !== "maceta") partes.push(`${partes.length ? "lazo" : "Lazo"} ${crBuscar("lazos", cfg.lazo)?.nombre.toLowerCase()}`);
   if (cfg.tipo === "maceta") partes.push(`Maceta ${crBuscar("macetas", cfg.maceta)?.nombre.toLowerCase()}`);
-  if (cfg.tipo === "suelta") partes.push(`Lazo ${crBuscar("lazos", cfg.lazo)?.nombre.toLowerCase()}`);
+  if (cfg.tipo === "suelta" && !partes.length) partes.push("Con tallo y hojas");
   return { flores, presentacion: partes.join(", ") };
 }
 
@@ -745,7 +773,8 @@ function pintarCreador() {
   let pres = "";
   if (cr.tipo === "ramo") pres += `<span class="cr-sub">Papel</span><div class="cr-chips" role="radiogroup" aria-label="Papel">${CREADOR.papeles.map(x => chip("cr-papel", x, x.id === cr.papel)).join("")}</div>`;
   if (cr.tipo === "maceta") pres += `<span class="cr-sub">Color de la maceta</span><div class="cr-chips" role="radiogroup" aria-label="Maceta">${CREADOR.macetas.map(x => chip("cr-maceta", x, x.id === cr.maceta)).join("")}</div>`;
-  if (cr.tipo !== "maceta") pres += `<span class="cr-sub">Lazo</span><div class="cr-chips" role="radiogroup" aria-label="Lazo">${CREADOR.lazos.map(x => chip("cr-lazo", x, x.id === cr.lazo)).join("")}</div>`;
+  if (CREADOR.elegirLazo && cr.tipo !== "maceta") pres += `<span class="cr-sub">Lazo</span><div class="cr-chips" role="radiogroup" aria-label="Lazo">${CREADOR.lazos.map(x => chip("cr-lazo", x, x.id === cr.lazo)).join("")}</div>`;
+  if (!pres) pres = `<p class="cr-sin-opciones">La flor individual va con su tallo y hojas. No necesitas elegir presentación.</p>`;
   $("#crPresentacion").innerHTML = pres;
   // 4. Extras
   $("#crExtras").innerHTML = EXTRAS.filter(e => CREADOR.extras.includes(e.id)).map(e => {
@@ -823,9 +852,9 @@ document.addEventListener("click", e => {
 function agregarCreacion() {
   if (!creacionValida(cr)) return pintarResumenCreador();
   const c = { tipo: cr.tipo, flores: { ...cr.flores }, extras: { ...cr.extras }, idea: $("#crIdea").value.trim().slice(0, 300) };
-  if (cr.tipo === "ramo") { c.papel = cr.papel; c.lazo = cr.lazo; }
+  if (cr.tipo === "ramo") c.papel = cr.papel;
+  if (CREADOR.elegirLazo && cr.tipo !== "maceta") c.lazo = cr.lazo;
   if (cr.tipo === "maceta") c.maceta = cr.maceta;
-  if (cr.tipo === "suelta") c.lazo = cr.lazo;
   carrito.push({ clave: "cr-" + Date.now(), creacion: c, cantidad: 1 });
   guardar(); pintarCarrito();
   aviso("¡Tu creación se agregó al carrito!");
@@ -856,7 +885,7 @@ $("#enviarPedido").addEventListener("click", () => {
     (tarjeta ? `\n\nMensaje para la tarjeta: "${tarjeta}"` : "") +
     (metodoActual() ? `\n\nMétodo de pago: ${metodoActual().nombre}` +
       `\nMonto del abono: ${montoMetodo(metodoActual(), PORCENTAJE_ABONO < 100 ? dividirPago(total).abono : total)}` +
-      `\n(Adjunto la captura del pago)` : "") +
+      (metodoActual().notaWhatsApp ? `\n${metodoActual().notaWhatsApp}` : "") : "") +
     `\n\nMi nombre:\nDirección de entrega:\nFecha de entrega:`;
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`, "_blank");
 });

@@ -556,3 +556,9 @@ button{font:inherit;cursor:pointer}
   .con-barra-creador .whatsapp-flotante{transform:translateY(-84px);transition:transform .3s}
 }
 .whatsapp-flotante{transition:transform .3s}
+
+/* Métodos de pago en "Hablemos": solo los nombres */
+.metodos-lista{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.metodos-lista li{background:var(--superficie);border:1px solid var(--borde);color:var(--principal);font-weight:800;border-radius:999px;padding:6px 16px;font-size:.95rem}
+
+.cr-sin-opciones{margin:0;color:var(--texto-suave);font-size:.92rem}
