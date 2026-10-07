@@ -562,3 +562,224 @@ button{font:inherit;cursor:pointer}
 .metodos-lista li{background:var(--superficie);border:1px solid var(--borde);color:var(--principal);font-weight:800;border-radius:999px;padding:6px 16px;font-size:.95rem}
 
 .cr-sin-opciones{margin:0;color:var(--texto-suave);font-size:.92rem}
+
+/* =========================================================
+   18. CARRITO — diseño actual y minimalista
+   ========================================================= */
+.carrito{width:min(440px,100%);background:var(--fondo)}
+.carrito.abierto{box-shadow:-24px 0 60px rgba(30,22,52,.18)}
+.carrito-cab{padding:calc(18px + env(safe-area-inset-top,0px)) 20px 16px;border-bottom:1px solid var(--borde);background:color-mix(in srgb,var(--fondo) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.carrito-titulo{display:flex;flex-direction:column;line-height:1.15}
+.carrito-titulo h2{font-size:1.55rem;margin:0}
+.carrito-titulo small{color:var(--texto-suave);font-size:.82rem;font-weight:600;margin-top:2px}
+.carrito-titulo small:empty{display:none}
+.carrito-cab .icono-btn{width:40px;height:40px}
+.carrito-cab .icono-btn svg{width:18px;height:18px}
+
+/* Lista de productos */
+.carrito-lista{padding:8px 20px 4px}
+.item{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:start;padding:16px 0;margin:0;border-bottom:1px solid var(--borde)}
+.item:last-child{border-bottom:0}
+.item-img{width:76px;height:92px;border-radius:14px;overflow:hidden;background:var(--fondo-alt)}
+.item-cuerpo{min-width:0;display:flex;flex-direction:column;gap:4px}
+.item-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.item h3{font-family:var(--fuente-texto);font-weight:700;font-size:.95rem;line-height:1.3;margin:0}
+.item-quitar{flex:none;display:grid;place-items:center;width:30px;height:30px;margin:-4px -6px 0 0;border:0;border-radius:8px;background:transparent;color:var(--texto-suave);transition:background .2s,color .2s}
+.item-quitar svg{width:17px;height:17px}
+.item-quitar:hover{background:color-mix(in srgb,#D7263D 10%,transparent);color:#C0283A}
+.item-detalle{margin:0;font-size:.82rem;color:var(--texto-suave);line-height:1.45}
+.item-extras{margin:2px 0 0;font-size:.8rem;line-height:1.4;color:var(--principal);font-weight:600}
+.item-extras span{color:var(--texto-suave);font-weight:500}
+.item-idea{margin:2px 0 0;font-size:.8rem;font-style:italic;color:var(--texto-suave);line-height:1.4}
+.item-pie{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.item .cantidad{margin:0;gap:0;border:1px solid var(--borde);border-radius:999px;background:var(--superficie);padding:2px}
+.item .cantidad button{width:30px;height:30px;border:0;background:transparent;font-size:1rem;color:var(--texto)}
+.item .cantidad button:hover{background:var(--fondo-alt)}
+.item .cantidad span{min-width:24px;text-align:center;font-weight:700;font-size:.9rem}
+.item-precio{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25}
+.item-precio strong{font-size:1rem}
+.item-precio small{font-size:.75rem;color:var(--texto-suave)}
+
+/* Carrito vacío */
+.carrito-vacio{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:72px 12px 40px;color:var(--texto-suave)}
+.vacio-icono{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:var(--fondo-alt);color:var(--principal);margin-bottom:10px}
+.vacio-icono svg{width:32px;height:32px}
+.carrito-vacio strong{font-size:1.05rem;color:var(--texto)}
+.carrito-vacio > span{font-size:.92rem}
+.vacio-acciones{display:flex;flex-direction:column;gap:10px;width:100%;max-width:260px;margin-top:22px}
+.vacio-acciones .btn{justify-content:center;padding:12px 20px}
+
+/* Pie: tarjeta, resumen y pago */
+.carrito-pie{padding:4px 20px 20px;border-top:1px solid var(--borde);display:flex;flex-direction:column;gap:12px}
+.carrito-tarjeta{border:1px solid var(--borde);border-radius:14px;background:var(--superficie);margin-top:12px}
+.carrito-tarjeta summary{list-style:none;display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
+.carrito-tarjeta summary::-webkit-details-marker{display:none}
+.carrito-tarjeta summary > svg:first-child{width:20px;height:20px;color:var(--principal);flex:none}
+.carrito-tarjeta summary > span{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.3}
+.carrito-tarjeta summary strong{font-size:.9rem}
+.carrito-tarjeta summary small{font-size:.78rem;color:var(--texto-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.carrito-tarjeta.con-texto summary small{color:var(--principal);font-style:italic}
+.carrito-tarjeta .flecha{width:18px;height:18px;color:var(--texto-suave);transition:transform .2s;flex:none}
+.carrito-tarjeta[open] .flecha{transform:rotate(180deg)}
+.carrito-pie .carrito-tarjeta textarea{margin:0;border:0;border-top:1px solid var(--borde);border-radius:0 0 14px 14px;min-height:80px;padding:12px 14px;background:transparent}
+.carrito-pie .carrito-tarjeta textarea:focus{outline:none;background:var(--fondo)}
+
+.carrito-resumen{background:var(--superficie);border:1px solid var(--borde);border-radius:14px;padding:14px}
+.carrito-resumen .total{margin:0;align-items:flex-start;font-size:1.05rem}
+.total-montos{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.total-montos #total{font-size:1.4rem}
+.carrito-resumen .total-bs{font-size:.88rem}
+.carrito-resumen .tasa-carrito{margin:6px 0 0;text-align:right;font-size:.74rem}
+.carrito-resumen .pago-carrito{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 0;padding:0;background:transparent;font-size:.8rem}
+.carrito-resumen .pago-carrito > div{flex-direction:column;align-items:flex-start;gap:2px;margin:0;background:var(--fondo-alt);border-radius:10px;padding:8px 10px}
+.carrito-resumen .pago-carrito > div:first-child{background:color-mix(in srgb,var(--amarillo) 22%,var(--superficie))}
+.carrito-resumen .pago-carrito > div + div{margin-top:0}
+.carrito-resumen .pago-carrito span:first-child{color:var(--texto-suave);font-weight:600}
+.carrito-resumen .pago-carrito span:last-child{text-align:left;line-height:1.3}
+.carrito-resumen .pago-carrito .monto-bs{display:block;font-size:.95em}
+
+.metodos-carrito{margin:0;padding:14px;border-radius:14px}
+.metodos-titulo{font-size:.9rem}
+.metodos-opciones{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:var(--fondo-alt);border-radius:12px;padding:4px}
+.metodos-opciones button{border:0;border-radius:9px;background:transparent;padding:9px 10px}
+.metodos-opciones button[aria-checked="true"]{background:var(--superficie);color:var(--texto);box-shadow:0 1px 3px rgba(30,22,52,.12)}
+
+.carrito-enviar{margin:0 -20px -20px}
+#enviarPedido{width:100%;justify-content:center;gap:10px;padding:15px 20px}
+#enviarPedido svg{width:20px;height:20px}
+.metodos-opciones button[aria-checked="true"]{color:var(--principal);box-shadow:inset 0 0 0 1.5px var(--principal),0 1px 3px rgba(30,22,52,.12)}
+
+/* =========================================================
+   19. CARRITO COMO VENTANA FLOTANTE
+   En PC aparece bajo el ícono de la bolsa; en el celular
+   flota sobre la parte de abajo de la pantalla.
+   ========================================================= */
+.carrito{
+  top:84px; right:20px; bottom:auto; left:auto;
+  height:auto; max-height:calc(100vh - 104px); max-height:calc(100dvh - 104px);
+  width:min(420px, calc(100% - 40px));
+  border:1px solid var(--borde); border-radius:24px;
+  box-shadow:0 24px 60px rgba(30,22,52,.22), 0 4px 14px rgba(30,22,52,.10);
+  transform:translateY(-10px) scale(.96); transform-origin:top right;
+  opacity:0; visibility:hidden;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1), opacity .2s ease, visibility .28s;
+  padding-bottom:0;
+}
+.carrito.abierto{transform:none; opacity:1; visibility:visible; box-shadow:0 24px 60px rgba(30,22,52,.22), 0 4px 14px rgba(30,22,52,.10)}
+/* Flechita que apunta a la bolsa del encabezado */
+.carrito::before{content:"";position:fixed;display:none}
+.carrito-cab{padding:16px 18px 14px;border-radius:24px 24px 0 0}
+.carrito-lista{padding:4px 18px}
+.carrito-pie{padding:4px 18px 18px}
+.carrito-enviar{margin:0 -18px -18px;padding:12px 18px 16px;border-radius:0 0 24px 24px}
+.carrito-vacio{padding:40px 12px 32px}
+.capa{background:rgba(30,22,52,.28)}
+
+/* Celular: ventana flotante sobre la parte inferior */
+@media (max-width:600px){
+  .carrito{
+    top:auto; right:10px; left:10px; bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    width:auto; max-height:calc(100vh - 80px); max-height:calc(100dvh - 80px);
+    border-radius:22px; transform:translateY(24px) scale(.98); transform-origin:bottom center;
+  }
+  .carrito-cab{border-radius:22px 22px 0 0}
+  .carrito-enviar{border-radius:0 0 22px 22px;padding-bottom:14px}
+  .carrito-cab::before{content:"";position:absolute;top:6px;left:50%;width:36px;height:4px;border-radius:4px;background:var(--borde);transform:translateX(-50%)}
+  .carrito-cab{padding-top:20px}
+}
+@media (prefers-reduced-motion:reduce){.carrito{transition:opacity .15s,visibility .15s}}
+@media (min-width:601px){.carrito{max-height:calc(100vh - var(--carrito-top,84px) - 20px)}}
+@media (max-width:420px){#enviarPedido{font-size:.95rem;white-space:nowrap;padding:14px 16px}}
+
+/* =========================================================
+   20. VENTANA DEL PEDIDO — VERSIÓN COMPACTA
+   Más pequeña y densa, con todo el detalle visible.
+   ========================================================= */
+.carrito{width:min(360px, calc(100% - 32px));border-radius:20px}
+@media (min-width:601px){.carrito{max-height:min(620px, calc(100vh - var(--carrito-top,84px) - 16px));max-height:min(620px, calc(100dvh - var(--carrito-top,84px) - 16px))}}
+
+/* Encabezado */
+.carrito .carrito-cab{padding:11px 14px 10px;border-radius:20px 20px 0 0}
+.carrito .carrito-titulo h2{font-size:1.2rem}
+.carrito .carrito-titulo small{font-size:.74rem;margin-top:0}
+.carrito .carrito-cab .icono-btn{width:32px;height:32px}
+.carrito .carrito-cab .icono-btn svg{width:15px;height:15px}
+
+/* Productos */
+.carrito .carrito-lista{padding:2px 14px}
+.carrito .item{grid-template-columns:54px 1fr;gap:10px;padding:10px 0}
+.carrito .item-img{width:54px;height:64px;border-radius:10px}
+.carrito .item-cuerpo{gap:2px}
+.carrito .item h3{font-size:.84rem;line-height:1.25}
+.carrito .item-quitar{width:26px;height:26px;margin:-3px -5px 0 0}
+.carrito .item-quitar svg{width:15px;height:15px}
+.carrito .item-detalle,.carrito .item-extras,.carrito .item-idea{font-size:.74rem;line-height:1.35}
+.carrito .item-pie{margin-top:5px}
+.carrito .item .cantidad{padding:1px}
+.carrito .item .cantidad button{width:24px;height:24px;font-size:.9rem}
+.carrito .item .cantidad span{min-width:20px;font-size:.8rem}
+.carrito .item-precio strong{font-size:.88rem}
+.carrito .item-precio small{font-size:.68rem}
+
+/* Pie: tarjeta, resumen y pago */
+.carrito .carrito-pie{padding:2px 14px 14px;gap:8px}
+.carrito .carrito-tarjeta{margin-top:8px;border-radius:12px}
+.carrito .carrito-tarjeta summary{padding:8px 11px;gap:10px}
+.carrito .carrito-tarjeta summary > svg:first-child{width:17px;height:17px}
+.carrito .carrito-tarjeta summary strong{font-size:.8rem}
+.carrito .carrito-tarjeta summary small{font-size:.7rem}
+.carrito .carrito-pie .carrito-tarjeta textarea{min-height:64px;padding:9px 11px;font-size:.85rem}
+
+.carrito .carrito-resumen{padding:10px 12px;border-radius:12px}
+.carrito .carrito-resumen .total{font-size:.92rem}
+.carrito .total-montos #total{font-size:1.15rem}
+.carrito .carrito-resumen .total-bs{font-size:.76rem}
+.carrito .carrito-resumen .tasa-carrito{font-size:.66rem;margin-top:3px}
+.carrito .carrito-resumen .pago-carrito{gap:6px;margin-top:8px;font-size:.7rem}
+.carrito .carrito-resumen .pago-carrito > div{padding:6px 8px;border-radius:8px}
+
+.carrito .metodos-carrito{padding:10px 12px;border-radius:12px}
+.carrito .metodos-titulo{font-size:.8rem;margin-bottom:6px}
+.carrito .metodos-opciones{padding:3px;border-radius:10px;margin-bottom:8px}
+.carrito .metodos-opciones button{padding:6px 8px;font-size:.8rem;border-radius:8px}
+.carrito .datos-pago{gap:4px}
+.carrito .datos-pago > div{grid-template-columns:54px 1fr auto;gap:6px;padding:3px 3px 3px 8px;border-radius:8px}
+.carrito .datos-pago dt{font-size:.7rem}
+.carrito .datos-pago dd{font-size:.82rem}
+/* Copiar individual: solo ícono (el botón "Copiar todo" está debajo) */
+.carrito .datos-pago .btn-copiar{padding:5px 7px}
+.carrito .datos-pago .btn-copiar span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.carrito .monto-pagar{margin-top:6px;padding:6px 6px 6px 10px;border-radius:8px}
+.carrito .monto-pagar > span{font-size:.7rem}
+.carrito .monto-pagar strong{font-size:.95rem}
+.carrito .btn-copiar{font-size:.72rem;padding:4px 9px}
+.carrito .btn-copiar-todo{margin-top:8px;padding:8px 12px;font-size:.8rem;border-width:1.5px}
+.carrito .metodos-nota{font-size:.68rem;margin-top:6px;line-height:1.4}
+
+.carrito .carrito-enviar{margin:0 -14px -14px;padding:10px 14px 12px;border-radius:0 0 20px 20px}
+.carrito #enviarPedido{padding:11px 16px;font-size:.88rem;gap:8px}
+.carrito #enviarPedido svg{width:17px;height:17px}
+
+/* Carrito vacío más pequeño */
+.carrito .carrito-vacio{padding:26px 10px 22px;gap:4px}
+.carrito .vacio-icono{width:56px;height:56px;margin-bottom:6px}
+.carrito .vacio-icono svg{width:26px;height:26px}
+.carrito .carrito-vacio strong{font-size:.95rem}
+.carrito .carrito-vacio > span{font-size:.82rem}
+.carrito .vacio-acciones{gap:8px;margin-top:14px;max-width:220px}
+.carrito .vacio-acciones .btn{padding:9px 16px;font-size:.88rem}
+
+/* Celular: también más compacta */
+@media (max-width:600px){
+  .carrito{left:auto;right:10px;width:min(360px, calc(100% - 20px));max-height:78vh;max-height:78dvh;border-radius:20px;transform-origin:bottom right}
+  .carrito .carrito-cab{padding-top:16px}
+  .carrito .carrito-enviar{border-radius:0 0 20px 20px}
+}
+@media (max-width:360px){
+  .carrito .datos-pago > div{grid-template-columns:1fr auto}
+  .carrito .datos-pago dt{grid-column:1;grid-row:1}
+  .carrito .datos-pago dd{grid-column:1;grid-row:2}
+  .carrito .datos-pago .btn-copiar{grid-column:2;grid-row:1 / span 2}
+}
+.carrito #enviarPedido svg{flex:none}
+@media (max-width:340px){.carrito #enviarPedido{font-size:.84rem;padding:11px 12px}}

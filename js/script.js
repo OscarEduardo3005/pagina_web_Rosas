@@ -522,6 +522,7 @@ function infoItem(x) {
 }
 const itemValido = x => x.creacion ? creacionValida(x.creacion)
   : (() => { const p = PRODUCTOS.find(q => q.id === x.id); return p && p.opciones[x.opcion]; })();
+const ICONO_PAPELERA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
 function pintarCarrito() {
   let total = 0, unidades = 0;
   carrito = carrito.filter(itemValido);
@@ -530,19 +531,35 @@ function pintarCarrito() {
     total += sub; unidades += x.cantidad;
     return `<li class="item">
       <div class="item-img">${i.img}</div>
-      <div><h3>${i.nombre}</h3><small>${i.detalle}</small>
-        ${i.detalle2 ? `<small>${i.detalle2}</small>` : ""}
-        ${i.ext ? `<small class="item-extras">+ ${i.ext} (${usd(i.costoExt)} c/u)</small>` : ""}
-        ${i.idea ? `<small class="item-idea">“${esc(i.idea)}”</small>` : ""}
-        <div class="cantidad">
-          <button data-menos="${x.clave}" aria-label="Quitar uno">−</button>
-          <span>${x.cantidad}</span>
-          <button data-mas="${x.clave}" aria-label="Agregar uno">+</button>
-        </div></div>
-      <div style="text-align:right"><strong>${usd(sub)}</strong>${tasa ? `<br><small>${bs(sub)}</small>` : ""}<br>
-        <button class="quitar" data-quitar="${x.clave}">Quitar</button></div>
+      <div class="item-cuerpo">
+        <div class="item-cab">
+          <h3>${i.nombre}</h3>
+          <button class="item-quitar" data-quitar="${x.clave}" aria-label="Quitar ${i.nombre} del pedido">${ICONO_PAPELERA}</button>
+        </div>
+        <p class="item-detalle">${i.detalle}${i.detalle2 ? `<br>${i.detalle2}` : ""}</p>
+        ${i.ext ? `<p class="item-extras">+ ${i.ext} <span>(${usd(i.costoExt)} c/u)</span></p>` : ""}
+        ${i.idea ? `<p class="item-idea">“${esc(i.idea)}”</p>` : ""}
+        <div class="item-pie">
+          <div class="cantidad" role="group" aria-label="Cantidad">
+            <button data-menos="${x.clave}" aria-label="Quitar uno">−</button>
+            <span aria-live="polite">${x.cantidad}</span>
+            <button data-mas="${x.clave}" aria-label="Agregar uno">+</button>
+          </div>
+          <div class="item-precio"><strong>${usd(sub)}</strong>${tasa ? `<small>${bs(sub)}</small>` : ""}</div>
+        </div>
+      </div>
     </li>`;
-  }).join("") : `<li class="carrito-vacio">Tu carrito está vacío.<br>Agrega unas flores para empezar tu pedido.</li>`;
+  }).join("") : `<li class="carrito-vacio">
+      <span class="vacio-icono" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span>
+      <strong>Tu carrito está vacío</strong>
+      <span>Agrega unas flores o arma un ramo a tu gusto.</span>
+      <div class="vacio-acciones">
+        <a href="#productos" class="btn btn-principal" data-cerrar-carrito>Ver productos</a>
+        <a href="#crea-tu-ramo" class="btn btn-borde" data-cerrar-carrito>Crea tu ramo</a>
+      </div>
+    </li>`;
+  $("#carritoPie").hidden = !carrito.length;
+  $("#carritoConteo").textContent = unidades ? `${unidades} ${unidades === 1 ? "producto" : "productos"}` : "";
   $("#total").textContent = usd(total);
   $("#totalBs").textContent = tasa ? bs(total) : "";
   const pago = dividirPago(total);
@@ -557,14 +574,27 @@ function pintarCarrito() {
   $("#enviarPedido").style.opacity = carrito.length ? 1 : .5;
 }
 $("#carritoLista").addEventListener("click", e => {
-  const c = e.target.dataset;
+  if (e.target.closest("[data-cerrar-carrito]")) return cerrarCarrito();
+  const b = e.target.closest("button"); if (!b) return;
+  const c = b.dataset;
   const x = carrito.find(i => i.clave === (c.mas || c.menos || c.quitar)); if (!x) return;
   if (c.mas) x.cantidad++;
   if (c.menos) x.cantidad--;
   if (c.quitar || x.cantidad < 1) carrito = carrito.filter(i => i !== x);
   guardar(); pintarCarrito();
 });
-function abrirCarrito() { $("#carrito").classList.add("abierto"); $("#carrito").setAttribute("aria-hidden", "false"); $("#capa").classList.add("visible"); $("#cerrarCarrito").focus({ preventScroll: true }); }
+/* En PC, la ventana flotante se ubica justo debajo del ícono de la bolsa */
+function ubicarCarrito() {
+  const c = $("#carrito");
+  if (window.innerWidth <= 600) { c.style.top = c.style.right = ""; return; }
+  const r = $("#abrirCarrito").getBoundingClientRect();
+  const top = Math.max(12, r.bottom + 10);
+  c.style.top = top + "px";
+  c.style.setProperty("--carrito-top", top + "px");
+  c.style.right = Math.max(12, window.innerWidth - r.right - 8) + "px";
+}
+window.addEventListener("resize", () => { if ($("#carrito").classList.contains("abierto")) ubicarCarrito(); });
+function abrirCarrito() { ubicarCarrito(); $("#carrito").classList.add("abierto"); $("#carrito").setAttribute("aria-hidden", "false"); $("#capa").classList.add("visible"); $("#cerrarCarrito").focus({ preventScroll: true }); }
 function cerrarCarrito() { $("#carrito").classList.remove("abierto"); $("#carrito").setAttribute("aria-hidden", "true"); if (!$("#modal").classList.contains("visible")) $("#capa").classList.remove("visible"); }
 $("#abrirCarrito").addEventListener("click", abrirCarrito);
 $("#cerrarCarrito").addEventListener("click", cerrarCarrito);
@@ -861,6 +891,15 @@ function agregarCreacion() {
   $("#crVerCarrito").hidden = false;
 }
 $("#crVerCarrito")?.addEventListener("click", abrirCarrito);
+
+/* Mensaje de tarjeta: muestra "Escrito" cuando hay texto */
+const estadoTarjeta = () => {
+  const t = $("#mensajeTarjeta").value.trim();
+  $("#tarjetaEstado").textContent = t ? `“${t.length > 34 ? t.slice(0, 34) + "…" : t}”` : "Opcional";
+  $("#carritoTarjeta").classList.toggle("con-texto", !!t);
+};
+$("#mensajeTarjeta").addEventListener("input", estadoTarjeta);
+$("#carritoTarjeta").addEventListener("toggle", () => { if ($("#carritoTarjeta").open) $("#mensajeTarjeta").focus({ preventScroll: true }); });
 
 /* Enviar pedido por WhatsApp */
 $("#enviarPedido").addEventListener("click", () => {

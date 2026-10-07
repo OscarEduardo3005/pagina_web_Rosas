@@ -299,23 +299,42 @@ FIN DE OPINIONES OCULTAS -->
 <div class="capa" id="capa"></div>
 <aside class="carrito" id="carrito" aria-label="Carrito" aria-hidden="true">
   <div class="carrito-cab">
-    <h2>Tu pedido</h2>
-    <button class="icono-btn" id="cerrarCarrito" aria-label="Cerrar carrito">✕</button>
+    <div class="carrito-titulo">
+      <h2>Tu pedido</h2>
+      <small id="carritoConteo"></small>
+    </div>
+    <button class="icono-btn" id="cerrarCarrito" aria-label="Cerrar carrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <ul class="carrito-lista" id="carritoLista"></ul>
-  <div class="carrito-pie">
-    <label for="mensajeTarjeta">Mensaje para la tarjeta (opcional)</label>
-    <textarea id="mensajeTarjeta" placeholder="Ej.: Feliz cumpleaños, mamá. Te quiero mucho."></textarea>
-    <div class="total"><span>Total</span><span style="text-align:right"><span id="total">$ 0,00</span><small id="totalBs" class="total-bs"></small></span></div>
-    <p class="tasa-carrito"><span class="tasa-bcv"></span></p>
-    <div class="pago-carrito" id="pagoCarrito" hidden>
-      <div><span>Abono hoy (<span class="pct-abono">50</span>%)</span><span id="abonoCarrito"></span></div>
-      <div><span>Al recibir tu pedido</span><span id="restoCarrito"></span></div>
+  <div class="carrito-pie" id="carritoPie">
+    <!-- Mensaje para la tarjeta (se despliega al tocarlo) -->
+    <details class="carrito-tarjeta" id="carritoTarjeta">
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        <span><strong>Mensaje para la tarjeta</strong><small id="tarjetaEstado">Opcional</small></span>
+        <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <textarea id="mensajeTarjeta" maxlength="250" placeholder="Ej.: Feliz cumpleaños, mamá. Te quiero mucho."></textarea>
+    </details>
+
+    <!-- Resumen -->
+    <div class="carrito-resumen">
+      <div class="total"><span>Total</span><span class="total-montos"><span id="total">$ 0,00</span><small id="totalBs" class="total-bs"></small></span></div>
+      <p class="tasa-carrito"><span class="tasa-bcv"></span></p>
+      <div class="pago-carrito" id="pagoCarrito" hidden>
+        <div><span>Abonas hoy (<span class="pct-abono">50</span>%)</span><span id="abonoCarrito"></span></div>
+        <div><span>Al recibir</span><span id="restoCarrito"></span></div>
+      </div>
     </div>
+
     <!-- MÉTODOS DE PAGO: se editan en js/script.js (METODOS_PAGO) -->
     <div class="metodos-carrito" id="metodosCarrito" hidden></div>
+
     <div class="carrito-enviar">
-      <button class="btn btn-principal" id="enviarPedido">Enviar pedido por WhatsApp</button>
+      <button class="btn btn-principal" id="enviarPedido">
+        <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm5.9 15.7c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.8 8.8 0 0 1-4.4-3.8c-.3-.6.3-.5.9-1.7a.6.6 0 0 0 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3 14.4 14.4 0 0 0 5.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 0 0 2.2-1.5 2.7 2.7 0 0 0 .2-1.5c-.1-.2-.3-.3-.6-.4z"/></svg>
+        Enviar pedido por WhatsApp
+      </button>
     </div>
   </div>
 </aside>
