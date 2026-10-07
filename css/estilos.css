@@ -1,7 +1,7 @@
 /* =========================================================
    1. PALETA DE COLORES — cambia estos valores y toda la
       página se actualiza. Inspirada en el lazo lavanda y
-      las flores amarillas de Amara.
+      las flores amarillas de Bloom & Co.
    ========================================================= */
 :root{
   --fondo:          #F8F6FD;  /* fondo general (blanco lavanda) */
@@ -783,3 +783,13 @@ button{font:inherit;cursor:pointer}
 }
 .carrito #enviarPedido svg{flex:none}
 @media (max-width:340px){.carrito #enviarPedido{font-size:.84rem;padding:11px 12px}}
+
+/* =========================================================
+   21. LOGO "Bloom & Co"
+   ========================================================= */
+.logo-texto{letter-spacing:.06em;font-size:1.7rem;white-space:nowrap}
+.logo-amp{color:var(--principal);font-size:.9em;margin:0 .02em}
+.pie .logo-amp{color:var(--lavanda)}
+.logo-sub{letter-spacing:.14em;text-transform:uppercase;font-size:.6rem;margin-top:3px}
+@media (max-width:400px){.logo-texto{font-size:1.35rem;letter-spacing:.04em}}
+@media (max-width:340px){.logo svg{width:28px;height:21px}.logo{gap:7px}.logo-texto{font-size:1.22rem}}

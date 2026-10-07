@@ -915,7 +915,7 @@ $("#enviarPedido").addEventListener("click", () => {
       (i.ext ? `\n   Extras por unidad: ${i.ext} (+ ${usd(i.costoExt)})` : "");
   });
   const tarjeta = $("#mensajeTarjeta").value.trim();
-  const mensaje = `Hola Amara, quiero hacer este pedido:\n\n${lineas.join("\n")}\n\nTotal: ${precioTexto(total)}` +
+  const mensaje = `Hola Bloom & Co, quiero hacer este pedido:\n\n${lineas.join("\n")}\n\nTotal: ${precioTexto(total)}` +
     (tasa ? `\nTasa BCV usada: Bs. ${fmt(tasa)}` : "") +
     (PORCENTAJE_ABONO < 100
       ? `\n\nForma de pago:\n• Abono por adelantado (${PORCENTAJE_ABONO}%): ${precioTexto(dividirPago(total).abono)}` +
