@@ -140,6 +140,8 @@ const PRODUCTOS = [
    producto con el botón "Extras". Precios EN DÓLARES (cada
    unidad); el monto en bolívares se calcula solo.
    max: cuántas unidades de ese extra se pueden agregar.
+   imagen: foto del extra (cuadrada, en la carpeta img/extras/).
+           Si no tiene, se muestra un ícono.
    exclusivo:true → ese extra NO aparece en todos los productos,
    solo en los que lo nombren en su lista extras:[...].
    Para que un producto muestre solo algunos extras, agrégale
@@ -148,16 +150,16 @@ const PRODUCTOS = [
    ⚠️ Los precios son de ejemplo: cámbialos por los tuyos.
    ========================================================= */
 const EXTRAS = [
-  { id:"flor",       nombre:"Flor adicional",        detalle:"Del mismo estilo del producto",      precio:1.5, max:20 },
-  { id:"luces",      nombre:"Luces LED cálidas",     detalle:"Tira de luces que brillan de noche", precio:2,   max:3 },
+  { id:"flor",       nombre:"Flor adicional",        detalle:"Del mismo estilo del producto",      precio:1.5, max:20, imagen:"img/extras/flor.jpg" },
+  { id:"luces",      nombre:"Luces LED cálidas",     detalle:"Tira de luces que brillan de noche", precio:2,   max:3, imagen:"img/extras/luces.jpg" },
   { id:"mariposa",   nombre:"Mariposa decorativa",   detalle:"Se coloca entre las flores",         precio:1,   max:5 },
-  { id:"lazo",       nombre:"Lazo de otro color",    detalle:"Dinos el color por WhatsApp",        precio:1,   max:1 },
+  { id:"lazo",       nombre:"Lazo de otro color",    detalle:"Dinos el color por WhatsApp",        precio:1,   max:1, imagen:"img/extras/lazo.jpg" },
   { id:"tarjeta",    nombre:"Tarjeta decorada",      detalle:"Con tu mensaje escrito a mano",      precio:1.5, max:1 },
   { id:"chocolates", nombre:"Chocolates",            detalle:"Cajita de bombones",                 precio:4,   max:3 },
   { id:"peluche",    nombre:"Peluche pequeño",       detalle:"Osito de unos 15 cm",                precio:6,   max:2 },
-  { id:"bolsa",      nombre:"Bolsa de regalo",       detalle:"Bolsa blanca con ventana",           precio:2,   max:2 },
+  { id:"bolsa",      nombre:"Bolsa de regalo",       detalle:"Bolsa blanca con ventana",           precio:2,   max:2, imagen:"img/extras/bolsa.jpg" },
   // exclusivo:true → solo aparece en los productos que lo incluyan en su lista extras:[...]
-  { id:"hotwheels",  nombre:"Carrito Hot Wheels",    detalle:"Carrito de colección en su empaque", precio:4,   max:5, exclusivo:true },
+  { id:"hotwheels",  nombre:"Carrito Hot Wheels",    detalle:"Carrito de colección en su empaque", precio:4,   max:5, exclusivo:true, imagen:"img/extras/hotwheels.jpg" },
 ];
 
 /* =========================================================
@@ -166,23 +168,24 @@ const EXTRAS = [
    tipos:   qué puede crear el cliente. precioBase es lo que
             cuesta la presentación (papel, maceta, tallo…).
             minFlores / maxFlores: límites de flores.
-   flores:  precio por cada flor.
+   flores:  precio por cada flor. imagen: foto real de esa flor
+            (carpeta img/creador/). Si no tiene, se dibuja.
    colores: colores disponibles para las flores (hex = color
             que se dibuja en la vista previa).
    extras:  cuáles de la lista EXTRAS se ofrecen aquí.
    ========================================================= */
 const CREADOR = {
   tipos: [
-    { id:"ramo",   nombre:"Ramo",             carrito:"Ramo personalizado",    detalle:"Envuelto en papel con lazo",   precioBase:5, minFlores:3, maxFlores:40 },
-    { id:"maceta", nombre:"Flores en maceta", carrito:"Maceta personalizada",  detalle:"Maceta tejida en limpiapipas", precioBase:4, minFlores:1, maxFlores:5 },
-    { id:"suelta", nombre:"Flor individual",  carrito:"Flor personalizada",    detalle:"Con tallo y hojas",            precioBase:1, minFlores:1, maxFlores:1 },
+    { id:"ramo",   nombre:"Ramo",             carrito:"Ramo personalizado",    detalle:"Envuelto en papel con lazo",   precioBase:5, minFlores:3, maxFlores:40, imagen:"img/creador/tipo-ramo.jpg" },
+    { id:"maceta", nombre:"Flores en maceta", carrito:"Maceta personalizada",  detalle:"Maceta tejida en limpiapipas", precioBase:4, minFlores:1, maxFlores:5, imagen:"img/creador/tipo-maceta.jpg" },
+    { id:"suelta", nombre:"Flor individual",  carrito:"Flor personalizada",    detalle:"Con tallo y hojas",            precioBase:1, minFlores:1, maxFlores:1, imagen:"img/creador/tipo-suelta.jpg" },
   ],
   flores: [
     // genero: "m" (el girasol) o "f" (la rosa), para escribir bien el color: "rosa roja", "lirio rojo"
-    { id:"girasol",   nombre:"Girasol",      plural:"Girasoles",       genero:"m", precio:3 },
-    { id:"pequena",   nombre:"Flor pequeña", plural:"Flores pequeñas", genero:"f", precio:1.5 },
+    { id:"girasol",   nombre:"Girasol",      plural:"Girasoles",       genero:"m", precio:3, imagen:"img/creador/flor-girasol.jpg" },
+    { id:"pequena",   nombre:"Flor pequeña", plural:"Flores pequeñas", genero:"f", precio:1.5, imagen:"img/creador/flor-pequena.jpg" },
     { id:"rosa",      nombre:"Rosa",         plural:"Rosas",           genero:"f", precio:3 },
-    { id:"lirio",     nombre:"Lirio",        plural:"Lirios",          genero:"m", precio:4 },
+    { id:"lirio",     nombre:"Lirio",        plural:"Lirios",          genero:"m", precio:4, imagen:"img/creador/flor-lirio.jpg" },
     { id:"tulipan",   nombre:"Tulipán",      plural:"Tulipanes",       genero:"m", precio:2.5 },
   ],
   colores: [
@@ -353,7 +356,11 @@ function pintarProductos() {
   const cta = categoria === "Todos" && !busqueda ? `
     <article class="producto cta-creador">
       <a href="#crea-tu-ramo" class="cta-creador-enlace">
-        <span class="cta-creador-arte" aria-hidden="true">${svgCreacion(EJEMPLO_CREACION)}</span>
+        <span class="cta-creador-arte cta-mosaico" aria-hidden="true">
+          <img src="img/lirio-azul.jpg" alt="" loading="lazy">
+          <img src="img/girasol-maceta-1.jpg" alt="" loading="lazy">
+          <img src="img/rama-flores-amarillas.jpg" alt="" loading="lazy">
+        </span>
         <span class="cta-creador-texto">
           <span class="nota-mano">¿No encuentras lo que buscas?</span>
           <strong>Crea tu propio ramo</strong>
@@ -392,6 +399,17 @@ document.addEventListener("click", e => {
 /* Modal */
 let actual = null, opcionSel = 0, ultimoFoco = null, extrasSel = {};
 
+/* Miniatura de un extra: su foto real, o un ícono si aún no tiene foto */
+const ICONOS_EXTRA = {
+  mariposa: '<path d="M11.4 11C9.8 6.6 6 4 3.2 4.6 1.4 5.2 2.4 9 4.6 10.4c1.6 1 4.1 1 6.8.6zM12.6 11c1.6-4.4 5.4-7 8.2-6.4 1.8.6.8 4.4-1.4 5.8-1.6 1-4.1 1-6.8.6zM11.4 12.2c-2.5.3-5.3 1.6-5.6 3.8-.3 1.9 1.9 2.5 3.4 1.3 1.3-1 1.9-2.9 2.2-5.1zM12.6 12.2c2.5.3 5.3 1.6 5.6 3.8.3 1.9-1.9 2.5-3.4 1.3-1.3-1-1.9-2.9-2.2-5.1z"/>',
+  tarjeta: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 8l9 6 9-6"/>',
+  chocolates: '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M4 12h16M12 8v12M12 8c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/>',
+  peluche: '<circle cx="7" cy="6.5" r="2.3"/><circle cx="17" cy="6.5" r="2.3"/><circle cx="12" cy="11" r="5"/><path d="M8 15.5c-1.8 1-3 2.6-3 4.5h14c0-1.9-1.2-3.5-3-4.5"/><path d="M10.5 11.5h.01M13.5 11.5h.01M11 13.5c.6.5 1.4.5 2 0"/>',
+};
+const miniExtra = e => e.imagen
+  ? `<span class="extra-foto"><img src="${e.imagen}" alt="" loading="lazy"></span>`
+  : `<span class="extra-foto extra-icono" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONOS_EXTRA[e.id] || '<path d="M12 3l1.8 4.6L18 9.5l-4.2 1.9L12 16l-1.8-4.6L6 9.5l4.2-1.9z"/>'}</svg></span>`;
+
 /* Extras disponibles para un producto */
 /* Si el producto tiene su lista extras:[...], se muestran en ese mismo orden */
 const extrasDe = p => p.extras ? p.extras.map(id => EXTRAS.find(e => e.id === id)).filter(Boolean) : EXTRAS.filter(e => !e.exclusivo);
@@ -408,6 +426,7 @@ function pintarExtras() {
   $("#listaExtras").innerHTML = extrasDe(actual).map(e => {
     const n = extrasSel[e.id] || 0;
     return `<li class="extra${n ? " activo" : ""}">
+      ${miniExtra(e)}
       <div class="extra-info">
         <strong>${e.nombre}</strong>
         ${e.detalle ? `<small>${e.detalle}</small>` : ""}
@@ -514,7 +533,7 @@ function infoItem(x) {
     const d = describirCreacion(x.creacion), t = crBuscar("tipos", x.creacion.tipo);
     return { nombre: t.carrito, detalle: d.flores, detalle2: d.presentacion,
       ext: textoExtras(x.creacion.extras), costoExt: costoExtras(x.creacion.extras),
-      img: `<span class="item-svg">${svgCreacion(x.creacion)}</span>`, idea: x.creacion.idea };
+      img: `<span class="item-svg item-real">${miniReal(x.creacion)}</span>`, idea: x.creacion.idea };
   }
   const p = PRODUCTOS.find(q => q.id === x.id), o = p.opciones[x.opcion];
   return { nombre: p.nombre, detalle: o.nombre, ext: textoExtras(x.extras), costoExt: costoExtras(x.extras),
@@ -770,28 +789,69 @@ let cr = { tipo:"ramo", flor:"girasol", color:"amarillo", flores:{}, papel:"blan
 const chip = (attr, item, activo, extra = "") =>
   `<button class="cr-chip${item.hex ? " cr-chip-color" : ""}" role="radio" aria-checked="${activo}" data-${attr}="${item.id}">${item.hex ? `<i style="background:${item.hex}"></i>` : ""}${item.nombre}${extra}</button>`;
 
+function muestraFlor(florId, colorId) {
+  const f = crBuscar("flores", florId), c = crBuscar("colores", colorId);
+  return f.imagen
+    ? `<span class="cr-muestra cr-muestra-foto"><img src="${f.imagen}" alt=""><i style="background:${c.hex}"></i></span>`
+    : `<span class="cr-muestra"><svg viewBox="0 0 60 60">${svgFlor(florId, c.hex, 30, 30, 26)}</svg></span>`;
+}
+/* Referencia real de la creación: foto del tipo elegido + fotos de las flores
+   elegidas (con su color y cantidad) + papel o maceta. Si el tipo no tiene
+   foto, se usa el dibujo como respaldo. */
+function vistaReal(cfg) {
+  const t = crBuscar("tipos", cfg.tipo);
+  if (!t?.imagen) return svgCreacion(cfg);
+  const flores = Object.entries(cfg.flores || {});
+  const max = 8, extra = flores.length - max;
+  const fichas = flores.slice(0, max).map(([k, n]) => {
+    const [f, c] = k.split("|"), fl = crBuscar("flores", f), co = crBuscar("colores", c);
+    const cara = fl.imagen ? `<img src="${fl.imagen}" alt="">` : `<svg viewBox="0 0 60 60">${svgFlor(f, co.hex, 30, 30, 26)}</svg>`;
+    return `<span class="cr-real-flor" title="${n} ${nombreFlor(f, c, n).toLowerCase()}">${cara}<i style="background:${co.hex}"></i><b>${n}</b></span>`;
+  }).join("") + (extra > 0 ? `<span class="cr-real-flor cr-real-mas">+${extra}</span>` : "");
+  let pres = "";
+  if (cfg.tipo === "ramo") { const pa = crBuscar("papeles", cfg.papel); if (pa) pres = `<span class="cr-real-pres"><i style="background:${pa.hex}"></i>Papel ${pa.nombre.toLowerCase()}</span>`; }
+  if (cfg.tipo === "maceta") { const ma = crBuscar("macetas", cfg.maceta); if (ma) pres = `<span class="cr-real-pres"><i style="background:${ma.hex}"></i>Maceta ${ma.nombre.toLowerCase()}</span>`; }
+  return `<div class="cr-real">
+    <img class="cr-real-foto" src="${t.imagen}" alt="Referencia: ${t.nombre.toLowerCase()}">
+    <span class="cr-real-etiqueta">Referencia</span>${pres}
+    <div class="cr-real-flores">${fichas || `<span class="cr-real-vacio">Agrega flores para verlas aquí</span>`}</div>
+  </div>`;
+}
+/* Miniatura (carrito y barra del celular): foto del tipo + flor principal */
+function miniReal(cfg) {
+  const t = crBuscar("tipos", cfg.tipo);
+  if (!t?.imagen) return svgCreacion(cfg);
+  const primera = Object.keys(cfg.flores || {})[0];
+  let badge = "";
+  if (primera) { const [f, c] = primera.split("|"); badge = `<span class="mini-flor">${muestraFlor(f, c)}</span>`; }
+  return `<span class="mini-real"><img src="${t.imagen}" alt="">${badge}</span>`;
+}
 function pintarCreador() {
   if (!$("#crTipos")) return;
   const t = crBuscar("tipos", cr.tipo), n = totalFlores(cr);
   // 1. Tipo
   $("#crTipos").innerHTML = CREADOR.tipos.map(x => `
     <button class="cr-tipo" role="radio" aria-checked="${x.id === cr.tipo}" data-cr-tipo="${x.id}">
-      <span class="cr-tipo-arte" aria-hidden="true">${svgCreacion({ ...EJEMPLO_CREACION, tipo: x.id, maceta: "cafe", flores: x.id === "ramo" ? { "girasol|amarillo": 5 } : x.id === "maceta" ? { "girasol|amarillo": 3 } : { "lirio|azul": 1 } })}</span>
+      <span class="cr-tipo-arte${x.imagen ? " cr-tipo-foto" : ""}" aria-hidden="true">${x.imagen ? `<img src="${x.imagen}" alt="" loading="lazy">` : svgCreacion({ ...EJEMPLO_CREACION, tipo: x.id, maceta: "cafe", flores: x.id === "ramo" ? { "girasol|amarillo": 5 } : x.id === "maceta" ? { "girasol|amarillo": 3 } : { "lirio|azul": 1 } })}</span>
       <strong>${x.nombre}</strong><small>${x.detalle}</small>
       <small class="cr-desde">${x.precioBase ? `Base ${usd(x.precioBase)}` : "Sin costo base"}</small>
     </button>`).join("");
   // 2. Flores
-  $("#crFlorTipo").innerHTML = CREADOR.flores.map(f => chip("cr-flor", f, f.id === cr.flor, ` <small>${usd(f.precio)}</small>`)).join("");
+  $("#crFlorTipo").innerHTML = CREADOR.flores.map(f => `
+    <button class="cr-chip cr-chip-flor" role="radio" aria-checked="${f.id === cr.flor}" data-cr-flor="${f.id}">
+      ${f.imagen ? `<img src="${f.imagen}" alt="">` : `<svg viewBox="0 0 60 60" aria-hidden="true">${svgFlor(f.id, crBuscar("colores", cr.color).hex, 30, 30, 26)}</svg>`}
+      ${f.nombre} <small>${usd(f.precio)}</small>
+    </button>`).join("");
   $("#crFlorColor").innerHTML = CREADOR.colores.map(c => chip("cr-color", c, c.id === cr.color)).join("");
   const fSel = crBuscar("flores", cr.flor), cSel = crBuscar("colores", cr.color);
   const lleno = n >= t.maxFlores;
   $("#crAnadir").disabled = lleno;
-  $("#crAnadir").innerHTML = `<span class="cr-muestra">${`<svg viewBox="0 0 60 60">${svgFlor(cr.flor, cSel.hex, 30, 30, 26)}</svg>`}</span> Agregar ${nombreFlor(cr.flor, cr.color)}`;
+  $("#crAnadir").innerHTML = `${muestraFlor(cr.flor, cr.color)} Agregar ${nombreFlor(cr.flor, cr.color)}`;
   const claves = Object.keys(cr.flores);
   $("#crLista").innerHTML = claves.length ? claves.map(k => {
     const [f, c] = k.split("|"), fl = crBuscar("flores", f), co = crBuscar("colores", c), q = cr.flores[k];
     return `<li class="cr-linea">
-      <span class="cr-muestra"><svg viewBox="0 0 60 60">${svgFlor(f, co.hex, 30, 30, 26)}</svg></span>
+      ${muestraFlor(f, c)}
       <span class="cr-linea-txt"><strong>${nombreFlor(f, c)}</strong><small>${usd(fl.precio)} c/u · ${usd(fl.precio * q)}</small></span>
       <span class="cantidad">
         <button data-cr-menos="${k}" aria-label="Quitar ${nombreFlor(f, c)}">−</button><span>${q}</span>
@@ -809,7 +869,7 @@ function pintarCreador() {
   // 4. Extras
   $("#crExtras").innerHTML = EXTRAS.filter(e => CREADOR.extras.includes(e.id)).map(e => {
     const q = cr.extras[e.id] || 0;
-    return `<li class="extra${q ? " activo" : ""}"><div class="extra-info"><strong>${e.nombre}</strong>${e.detalle ? `<small>${e.detalle}</small>` : ""}
+    return `<li class="extra${q ? " activo" : ""}">${miniExtra(e)}<div class="extra-info"><strong>${e.nombre}</strong>${e.detalle ? `<small>${e.detalle}</small>` : ""}
       <span class="extra-precio">+ ${usd(e.precio)}${tasa ? ` · ${bs(e.precio)}` : ""}</span></div>
       <div class="cantidad"><button data-cr-extra-menos="${e.id}" aria-label="Quitar ${e.nombre}" ${q ? "" : "disabled"}>−</button><span>${q}</span>
       <button data-cr-extra-mas="${e.id}" aria-label="Agregar ${e.nombre}" ${q >= e.max ? "disabled" : ""}>+</button></div></li>`;
@@ -818,7 +878,7 @@ function pintarCreador() {
 }
 function pintarResumenCreador() {
   const t = crBuscar("tipos", cr.tipo), n = totalFlores(cr), total = precioCreacion(cr), ext = costoExtras(cr.extras);
-  $("#crPreview").innerHTML = svgCreacion(cr);
+  $("#crPreview").innerHTML = vistaReal(cr);
   $("#crTitulo").textContent = t.carrito;
   const filas = [[`Base (${t.nombre.toLowerCase()})`, t.precioBase], [`Flores (${n})`, costoFlores(cr)]];
   if (ext) filas.push(["Extras", ext]);
@@ -832,7 +892,7 @@ function pintarResumenCreador() {
   $("#crMensaje").textContent = msg;
   $("#crAgregar").disabled = !!msg;
   // Barra fija en celular
-  $("#crBarraMini").innerHTML = svgCreacion(cr);
+  $("#crBarraMini").innerHTML = miniReal(cr);
   $("#crBarraFlores").textContent = `${n} ${n === 1 ? "flor" : "flores"}${tasa ? " · " + bs(total) : ""}`;
   $("#crBarraTotal").textContent = usd(total);
 }
